@@ -1,20 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>code storage</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        :root {
+            --bg: #0d1117;
+            --bg2: #161b22;
+            --border: #30363d;
+            --text: #c9d1d9;
+            --text-bright: #f0f6fc;
+            --muted: #8b949e;
+            --hover: #1c2128;
+            --active: #1f2937;
+            --primary: #1f6feb;
+            --danger: #da3633;
         }
-
+        .light {
+            --bg: #ffffff;
+            --bg2: #f6f8fa;
+            --border: #d0d7de;
+            --text: #24292f;
+            --text-bright: #1f2328;
+            --muted: #57606a;
+            --hover: #f3f4f6;
+            --active: #eaeef2;
+            --primary: #0969da;
+            --danger: #cf222e;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: #0d1117;
-            color: #c9d1d9;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -22,7 +39,6 @@
             font-size: 14px;
             overflow: hidden;
         }
-
         .app {
             display: flex;
             flex-direction: column;
@@ -30,570 +46,373 @@
             width: 100%;
             max-width: 1400px;
             margin: 0 auto;
-            background: #161b22;
-            border: 1px solid #30363d;
+            background: var(--bg2);
+            border: 1px solid var(--border);
             border-radius: 6px;
             overflow: hidden;
         }
-
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 16px;
-            background: #0d1117;
-            border-bottom: 1px solid #30363d;
+            padding: 8px 16px;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
             flex-shrink: 0;
+            gap: 8px;
+            flex-wrap: wrap;
         }
-
-        .header h1 {
-            font-weight: 400;
-            font-size: 16px;
-            color: #f0f6fc;
-            letter-spacing: -0.3px;
-        }
-
-        .header .ver {
-            font-size: 11px;
-            color: #8b949e;
-            background: #21262d;
-            padding: 2px 10px;
-            border-radius: 12px;
-        }
-
-        .main {
+        .header h1 { font-weight: 400; font-size: 16px; color: var(--text-bright); }
+        .header .actions {
             display: flex;
-            flex: 1;
-            overflow: hidden;
+            gap: 6px;
+            align-items: center;
+            margin-left: auto;
         }
-
+        .header .actions button, .header .actions label {
+            background: var(--hover);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 2px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            font-family: inherit;
+        }
+        .header .actions button:hover, .header .actions label:hover { background: var(--border); }
+        .main { display: flex; flex: 1; overflow: hidden; }
         .sidebar {
             width: 220px;
             min-width: 220px;
-            background: #0d1117;
-            border-right: 1px solid #30363d;
-            overflow-y: auto;
-            padding: 8px 0;
-            flex-shrink: 0;
-        }
-
-        .sidebar .folder-item,
-        .sidebar .file-item {
-            display: flex;
-            align-items: center;
-            padding: 3px 12px 3px 16px;
-            cursor: pointer;
-            font-size: 13px;
-            color: #8b949e;
-            transition: 0.1s;
-            user-select: none;
-            position: relative;
-        }
-
-        .sidebar .folder-item:hover,
-        .sidebar .file-item:hover {
-            background: #1c2128;
-            color: #f0f6fc;
-        }
-
-        .sidebar .file-item.active {
-            background: #1f2937;
-            color: #f0f6fc;
-        }
-
-        .sidebar .file-item .name {
-            color: #c9d1d9;
-        }
-
-        .sidebar .folder-item .arrow {
-            display: inline-block;
-            width: 16px;
-            font-size: 11px;
-            color: #8b949e;
-            transition: 0.1s;
-        }
-
-        .sidebar .folder-item .arrow.open {
-            transform: rotate(90deg);
-        }
-
-        .sidebar .folder-item .fname {
-            color: #f0f6fc;
-            font-weight: 500;
-        }
-
-        .sidebar .children {
-            padding-left: 16px;
-        }
-
-        .sidebar .children.collapsed {
-            display: none;
-        }
-
-        .sidebar .file-item .icon {
-            color: #8b949e;
-            margin-right: 6px;
-            font-size: 13px;
-        }
-
-        .sidebar .folder-item .icon {
-            color: #8b949e;
-            margin-right: 6px;
-            font-size: 13px;
-        }
-
-        .sidebar .edit-controls {
-            display: none;
-            margin-left: auto;
-            gap: 2px;
-        }
-
-        .sidebar .edit-controls.show {
-            display: flex;
-        }
-
-        .sidebar .edit-controls button {
-            background: none;
-            border: none;
-            color: #8b949e;
-            cursor: pointer;
-            font-size: 11px;
-            padding: 0 4px;
-            font-family: inherit;
-        }
-
-        .sidebar .edit-controls button:hover {
-            color: #f0f6fc;
-        }
-
-        .sidebar .edit-controls button.del:hover {
-            color: #f85149;
-        }
-
-        .content {
-            flex: 1;
+            background: var(--bg);
+            border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            background: #0d1117;
             overflow: hidden;
+            flex-shrink: 0;
         }
-
+        .sidebar-tools {
+            padding: 6px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        .sidebar-tools input {
+            flex: 1;
+            min-width: 60px;
+            padding: 2px 6px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            color: var(--text);
+            font-size: 12px;
+        }
+        .sidebar-tools button {
+            background: var(--hover);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 2px 6px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+        .folder-actions {
+            padding: 4px 6px 8px 6px;
+            gap: 6px;
+            display: none;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border);
+        }
+        .folder-actions.show { display: flex; }
+        .folder-actions button {
+            background: var(--hover);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 2px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+        .tree { flex: 1; overflow-y: auto; padding: 4px 0; }
+        .tree-item {
+            display: flex;
+            align-items: center;
+            padding: 2px 12px 2px 16px;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--muted);
+            user-select: none;
+        }
+        .tree-item:hover { background: var(--hover); color: var(--text-bright); }
+        .tree-item.active { background: var(--active); color: var(--text-bright); }
+        .tree-item .arrow {
+            width: 16px;
+            font-size: 11px;
+            color: var(--muted);
+            display: inline-block;
+            transition: 0.1s;
+            margin-right: 2px;
+        }
+        .tree-item .arrow.open { transform: rotate(90deg); }
+        .tree-item .icon { margin-right: 6px; font-size: 13px; }
+        .tree-item .name { color: var(--text); flex: 1; }
+        .tree-item .del {
+            display: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 13px;
+            padding: 0 4px;
+        }
+        .tree-item .del:hover { color: var(--danger); }
+        .tree-item .del.show { display: inline-block; }
+        .children { padding-left: 16px; }
+        .children.collapsed { display: none; }
+        .content { flex: 1; display: flex; flex-direction: column; background: var(--bg); overflow: hidden; }
         .content .toolbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 6px 16px;
-            background: #161b22;
-            border-bottom: 1px solid #30363d;
+            padding: 6px 10px;
+            background: var(--bg2);
+            border-bottom: 1px solid var(--border);
             flex-shrink: 0;
             min-height: 36px;
-        }
-
-        .content .toolbar .file-info {
-            font-size: 13px;
-            color: #8b949e;
-        }
-
-        .content .toolbar .file-info .path {
-            color: #f0f6fc;
-        }
-
-        .content .toolbar .actions {
-            display: flex;
+            flex-wrap: wrap;
             gap: 6px;
         }
-
+        .content .toolbar .file-info {
+            font-size: 13px;
+            color: var(--muted);
+            flex: 1;
+            min-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .content .toolbar .actions {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
         .content .toolbar .actions button {
-            background: #21262d;
-            border: 1px solid #30363d;
-            color: #c9d1d9;
-            padding: 2px 12px;
+            background: var(--hover);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 2px 8px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 12px;
-            font-family: inherit;
+            font-size: 11px;
         }
-
-        .content .toolbar .actions button:hover {
-            background: #30363d;
+        .content .toolbar .actions button.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+        .content .toolbar .actions button.danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+        .content .toolbar .actions button.active { background: var(--active); color: var(--text-bright); }
+        .editor-area { flex: 1; display: flex; overflow: hidden; background: var(--bg); }
+        .line-numbers {
+            width: 40px;
+            text-align: right;
+            padding: 16px 8px 16px 16px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--muted);
+            user-select: none;
+            overflow: hidden;
         }
-
-        .content .code-area {
+        .code-area {
             flex: 1;
-            padding: 16px;
             overflow: auto;
-            background: #0d1117;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background: var(--bg);
+            font-family: 'Consolas', 'Monaco', monospace;
             font-size: 13px;
             line-height: 1.6;
             white-space: pre-wrap;
             word-break: break-all;
-            color: #c9d1d9;
+            color: var(--text);
         }
-
-        .content .code-area textarea {
+        .code-area textarea {
             width: 100%;
             height: 100%;
-            background: #0d1117;
+            background: var(--bg);
             border: none;
-            color: #c9d1d9;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.6;
+            color: var(--text);
+            font-family: inherit;
+            font-size: inherit;
+            line-height: inherit;
             resize: none;
             outline: none;
-            padding: 0;
+            padding: 16px;
         }
-
-        .content .code-area textarea:focus {
-            outline: none;
+        .code-area pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-family: inherit;
+            padding: 16px;
         }
-
-        .content .empty-state {
+        .empty-state {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            flex: 1;
-            color: #8b949e;
+            height: 100%;
+            color: var(--muted);
             font-size: 14px;
         }
-
-        .content .empty-state .big {
-            font-size: 28px;
-            margin-bottom: 8px;
-            color: #30363d;
+        .empty-state .big { font-size: 28px; color: var(--border); margin-bottom: 8px; }
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 10px;
+            background: var(--bg2);
+            border-top: 1px solid var(--border);
+            font-size: 11px;
+            color: var(--muted);
+            flex-shrink: 0;
         }
-
         .editor-toggle {
             position: fixed;
             bottom: 16px;
             right: 16px;
-            background: #21262d;
-            border: 1px solid #30363d;
-            color: #8b949e;
+            background: var(--hover);
+            border: 1px solid var(--border);
+            color: var(--muted);
             padding: 4px 12px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 11px;
-            font-family: inherit;
             z-index: 50;
-            transition: 0.1s;
         }
-
-        .editor-toggle:hover {
-            background: #30363d;
-            color: #f0f6fc;
-        }
-
         .editor-toggle.active {
             background: #1f3a2a;
             border-color: #3a6a4a;
             color: #7aee7a;
         }
-
-        .password-modal {
+        .modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.7);
             z-index: 100;
             align-items: center;
             justify-content: center;
         }
-
-        .password-modal.show {
-            display: flex;
-        }
-
-        .password-modal .box {
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            padding: 24px 32px;
-            width: 320px;
-        }
-
-        .password-modal .box h3 {
-            font-weight: 400;
-            font-size: 16px;
-            color: #f0f6fc;
-            margin-bottom: 12px;
-        }
-
-        .password-modal .box input {
-            width: 100%;
-            padding: 6px 10px;
-            background: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 4px;
-            color: #c9d1d9;
-            font-size: 14px;
-            font-family: inherit;
-            margin-bottom: 10px;
-        }
-
-        .password-modal .box input:focus {
-            outline: none;
-            border-color: #58a6ff;
-        }
-
-        .password-modal .box .btn-row {
-            display: flex;
-            gap: 8px;
-            justify-content: flex-end;
-        }
-
-        .password-modal .box .btn-row button {
-            background: #21262d;
-            border: 1px solid #30363d;
-            color: #c9d1d9;
-            padding: 4px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            font-family: inherit;
-        }
-
-        .password-modal .box .btn-row button:hover {
-            background: #30363d;
-        }
-
-        .password-modal .box .btn-row button.primary {
-            background: #1f6feb;
-            border-color: #1f6feb;
-            color: #fff;
-        }
-
-        .password-modal .box .btn-row button.primary:hover {
-            background: #388bfd;
-        }
-
-        .password-modal .box .error {
-            color: #f85149;
-            font-size: 12px;
-            margin-bottom: 8px;
-            display: none;
-        }
-
-        .password-modal .box .error.show {
-            display: block;
-        }
-
-        .folder-actions {
-            display: none;
-            padding: 4px 12px;
-            gap: 4px;
-            flex-wrap: wrap;
-        }
-
-        .folder-actions.show {
-            display: flex;
-        }
-
-        .folder-actions button {
-            background: #21262d;
-            border: 1px solid #30363d;
-            color: #c9d1d9;
-            padding: 2px 10px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 11px;
-            font-family: inherit;
-        }
-
-        .folder-actions button:hover {
-            background: #30363d;
-        }
-
-        .sidebar .file-item .edit-controls button {
-            font-size: 10px;
-        }
-
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 80;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-overlay.show {
-            display: flex;
-        }
-
-        .modal-overlay .box {
-            background: #161b22;
-            border: 1px solid #30363d;
+        .modal.show { display: flex; }
+        .modal .box {
+            background: var(--bg2);
+            border: 1px solid var(--border);
             border-radius: 6px;
             padding: 20px 24px;
             width: 400px;
             max-width: 90vw;
+            color: var(--text);
         }
-
-        .modal-overlay .box h3 {
-            font-weight: 400;
-            font-size: 15px;
-            color: #f0f6fc;
-            margin-bottom: 10px;
-        }
-
-        .modal-overlay .box input {
+        .modal .box h3 { font-weight: 400; font-size: 15px; color: var(--text-bright); margin-bottom: 8px; }
+        .modal .box p { margin-bottom: 8px; font-size: 13px; color: var(--muted); }
+        .modal .box label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+        .modal .box input {
             width: 100%;
             padding: 5px 10px;
-            background: #0d1117;
-            border: 1px solid #30363d;
+            background: var(--bg);
+            border: 1px solid var(--border);
             border-radius: 4px;
-            color: #c9d1d9;
+            color: var(--text);
             font-size: 13px;
-            font-family: inherit;
             margin-bottom: 8px;
         }
-
-        .modal-overlay .box input:focus {
-            outline: none;
-            border-color: #58a6ff;
-        }
-
-        .modal-overlay .box textarea {
-            width: 100%;
-            min-height: 120px;
-            padding: 5px 10px;
-            background: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 4px;
-            color: #c9d1d9;
-            font-size: 13px;
-            font-family: 'Consolas', monospace;
-            resize: vertical;
-            margin-bottom: 8px;
-        }
-
-        .modal-overlay .box textarea:focus {
-            outline: none;
-            border-color: #58a6ff;
-        }
-
-        .modal-overlay .box .btn-row {
+        .modal .box .btn-row {
             display: flex;
             gap: 8px;
             justify-content: flex-end;
+            flex-wrap: wrap;
         }
-
-        .modal-overlay .box .btn-row button {
-            background: #21262d;
-            border: 1px solid #30363d;
-            color: #c9d1d9;
-            padding: 4px 16px;
+        .modal .box .btn-row button {
+            background: var(--hover);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 4px 12px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 12px;
-            font-family: inherit;
         }
-
-        .modal-overlay .box .btn-row button:hover {
-            background: #30363d;
+        .modal .box .btn-row button.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+        .modal .box .btn-row button.danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+        .modal .box .error { color: var(--danger); font-size: 12px; margin-bottom: 8px; display: none; }
+        .modal .box .error.show { display: block; }
+        .context-menu {
+            display: none;
+            position: fixed;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 4px 0;
+            z-index: 200;
+            min-width: 150px;
         }
-
-        .modal-overlay .box .btn-row button.primary {
-            background: #1f6feb;
-            border-color: #1f6feb;
-            color: #fff;
-        }
-
-        .modal-overlay .box .btn-row button.primary:hover {
-            background: #388bfd;
-        }
-
-        .modal-overlay .box .btn-row button.danger {
-            background: #3a1a1a;
-            border-color: #5a2a2a;
-            color: #f85149;
-        }
-
-        .modal-overlay .box .btn-row button.danger:hover {
-            background: #5a2a2a;
-        }
-
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0d1117;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #30363d;
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #484f58;
-        }
-
-        @media (max-width: 600px) {
-            .sidebar {
-                width: 160px;
-                min-width: 160px;
-            }
-            .sidebar .folder-item,
-            .sidebar .file-item {
-                font-size: 12px;
-                padding: 2px 8px 2px 12px;
-            }
-            .header h1 {
-                font-size: 14px;
-            }
-            .content .code-area {
-                font-size: 12px;
-                padding: 10px;
-            }
-            .modal-overlay .box {
-                width: 95vw;
-                padding: 16px;
-            }
-        }
+        .context-menu.show { display: block; }
+        .context-menu div { padding: 4px 12px; cursor: pointer; font-size: 12px; color: var(--text); }
+        .context-menu div:hover { background: var(--hover); }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
     </style>
-</head>
-<body>
-
-    <div class="app" id="app">
+<style>:root [href="https://adstub.net/cina777/"], :root [href="https://adstub.net/judi89/"], :root [href^="//mage98rquewz.com/"], :root .inset-x-0[x-data="adblockBanner()"], :root #hero a[download="Unicore.zip"], :root body > div[data-captcha-enable="true"] > div.cleanslate[id^="google-captcha-"] > div.captcha-box, :root html[data-scrapbook-source][data-scrapbook-create][data-scrapbook-title] > body.no-js > div.main-wrapper[role="main"] > div.main-content, :root html > body.body > div.container > div.content > form > table.optoutForm, :root html > body > div.container > form#unsubscribe-form[onsubmit="submitUnsubscribeForm(event)"], :root html[lang] > body:not([class]):not([id]):not([style]) > div.background-container > div.container > div.captcha-box, :root .wp-singular > div[data-sm][style*="2147483647"] > iframe[style*="100%"][allow*="clipboard-write"], :root #ipBar + .main, :root #mainBtn[onclick="startVerify()"], :root #turnstile[onclick="handleClick()"], :root body > .page > .verify-row, :root body > .page > #mainVerifyRow, :root html[lang] > body.ishome > div.adult + main.main, :root .container a[title="AI Jerk OFF"][href][target="_blank"], :root body > #mdl-register.modal.anm-e.regnow, :root .flex a[href^="http://adpostup.com/"], :root #app-root ~ a[href][target="_blank"][style="position: fixed;top: 0;left: 0;width: 100%;height: 100%;display: block;z-index: 9999999;cursor: auto"], :root #wrapper ~ a[href][target="_blank"][style="position: fixed;top: 0;left: 0;width: 100%;height: 100%;display: block;z-index: 9999999;cursor: auto"], :root .header ~ div[style^="position:fixed;inset:0;z-index:2147483647;background:black;opacity:0.01;height:"], :root img[width="728"][height="90"], :root button.btn[data-openuri*="/4/"], :root #adbtm[onclick="badr();"], :root #teaser3[style^="width: 100%;height:0;text-align: center;display: scroll;position:fixed;"], :root a[href^="https://www.polybuzz.ai/"] img.responsive-image, :root .kln > a[href^="https://www.polybuzz.ai/"], :root html[lang][style^="--main-bg-color"] > body:not([class]):not([id]) > div#container[style="visibility: visible;"] > div#banner[style="opacity:0"] ~ main:not([class]):not([id]) > div#message, :root #donate > a[href][style][onclick="thank_you()"][target="_blank"][rel="nofollow"], :root .jwplayer ~ div[style="position:absolute;top:0;left:0;width: 100%;height: 100%;z-index:2147483647"], :root iframe.lazyloaded[data-src^="https://rcm-fe.amazon-adsystem.com/"], :root div[style^="position: fixed; inset: 0px; z-index: 2147483647; background: black; opacity: 0.01"], :root .skel-layers-fixed a[href*=".com/smartpop/"], :root [style^="position: fixed; inset: 0px; z-index: 2147483647; background-color: transparent; pointer-events: auto; cursor: auto; margin: 0px; padding: 0px; display: block;"], :root .ads-iframe:not([style="position: absolute; left: -10px; top: -10px;"]), :root .ad-content:not(:empty), :root div[style="position: fixed; display: block; width: 100%; height: 100%; inset: 0px; background-color: rgba(0, 0, 0, 0); z-index: 300000;"], :root #weatherad:not(:empty), :root #topbannerad:not(:empty), :root #topBannerAd:not(:empty), :root #ad_img:not(:empty), :root #adContext:not(:empty), :root .ad-300x250:not(.ads), :root [data-ad-width]:not([style$="left: -10000px !important; top: -1000px !important;"]):not(.adsbygoogle), :root .adunit:not(.text-ad), :root .adslot_1:not(.text-ad), :root [href="https://adstub.net/ratu89/"], :root #ads-footer:not([style^="position: absolute; left: -5000px"]), :root a.tdn[href^="https://landing.brazzersnetwork.com/"], :root #ads-1:not([style^="position: absolute; left: -5000px"]), :root #adframe:not(frameset):not([style^="position: absolute; left: -5000px"]), :root #ad_slot:not([style^="position: absolute; left: -5000px"]), :root #ad_big:not([style^="position: absolute; left: -5000px"]), :root #ad_area:not([style^="position: absolute; left: -5000px"]), :root #ad_300:not([style^="position: absolute; left: -5000px"]), :root a[dontfo=""][style$="position: absolute; z-index: 2147483647;"], :root [href^="https://join.enjoyx.com/track/"], :root a[href*=".click/?z="][href*="&n"], :root [href^="//taghaugh.com/"], :root div[class$="player-promo-col"], :root [href^="https://www.safestcontentgate.com/"], :root [href^="//cadsecs.com/"], :root [href^="//mellowads.com/"], :root [href^="https://fireads.online/"], :root html[lang="vi"] .sspp-area, :root html[lang="tr"] > body.has-footer-ad.has-pageskin-desktop a.pageskin-desktop-wrapper, :root html[lang="tr"] #aa-wp .container-ads-adjustment, :root #videojs ~ div[style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; z-index: 2147483646;"], :root .close-btn4[onclick="closeAd4()"], :root .close-btn3[onclick="closeAd3()"], :root .close-btn[onclick="closeAd()"], :root #go-to-top + div[id][class], :root .bb ~ main#container .containerAds, :root #midadd:not(:empty), :root #adzerk:not(:empty), :root [href^="//x4pollyxxpush.com/"], :root #advert-header:not(:empty), :root div.card > div#cbRow.checkbox-row[onclick="startVerify()"], :root #tongkatlol ~ script[src^="/shrinke/js/"] ~ .main-content-box > div[style="width:100%;height:110px"], :root body > div[style$="z-index: 2147483647; top: 0px; left: 0px; position: fixed; display: block;"], :root html > body > div.container.m-p > #checkbox-window.checkbox-window, :root .container a[href^="https://seduced.com"][href*="ref="], :root #kt_player .fp-brand, :root a[id][href="https://toolkitspro.com"][rel^="noopener noreferrer"], :root #kt_player #ads_iframe, :root .header-container a[href^="https://candyai.gg/"], :root [src^="//dombnrs.com/"], :root [href="https://adstub.net/arab777/"], :root #kt_player ~ #sp-player, :root a[href*="/go.php?a_aid="], :root [href^="https://klsdee.com/"], :root [href^="//producebreed.com/"], :root #modern-player-root ~ div[id^="custom-invisible-overlay-"][class^="custom-popup-overlay-"], :root [href="//xxxrevpushclcdu.com/app.webp"], :root [href^="https://adult.xyz/"], :root [href^="https://popcash.net/"], :root a[href^="http://www.poweredbyliquidfire.mobi/"], :root [href^="https://t.mobtyb.com/"], :root [data-lnguri*="vipbox"], :root .reklama:not(.ads), :root a[href^="https://syndication.exdynsrv.com/splash.php"], :root [href*="/afu.php"], :root span[id^="ezoic-pub-ad-placeholder-"], :root ins.adsbygoogle[data-ad-slot], :root ins.adsbygoogle[data-ad-client], :root img[src^="https://s-img.adskeeper.com/"], :root #download a[download="Unicore.zip"], :root guj-ad, :root gpt-ad, :root div#spot-holder.spot-holder[style="display: block;"], :root div[ow-ad-unit-wrapper], :root div[id^="zergnet-widget"], :root html[lang] > body:not([class]):not([id]):not([style]) > div.container > div.recaptcha-box, :root div[id^="vuukle-ad-"], :root div[id^="taboola-stream-"], :root div[id^="sticky_ad_"], :root div[id^="st"][style^="z-index: 999999999;"], :root div[id^="rc-widget-"], :root html > body > div.content > dl > dd.dd1 > div.min_sider > form#form1[action="unsubscribe.php"], :root div[id^="mrec-leaderboard-"], :root div[id^="gpt_ad_"], :root div[id^="ezoic-pub-ad-"], :root div[id^="dfp-ad-"], :root div[id^="crt-"][style], :root div[id^="adspot-"], :root a[onclick="openAuc();"], :root ps-connatix-module, :root div[id^="ad_position_"], :root [data-ad-module]:not([style$="left: -10000px !important; top: -1000px !important;"]):not(.adsbygoogle), :root a[id][href="https://chpadblock.com/"][rel^="noopener noreferrer"], :root div[id^="ad-div-"], :root div[id*="ScriptRoot"], :root div[id*="MarketGid"], :root [href="https://adstub.net/rusia777/"], :root #banner468:not([style^="position: absolute; left: -5000px"]), :root div[data-id-advertdfpconf], :root div[data-dfp-id], :root div[style="top: 0px; left: 0px; width: 1287px; height: 500px; position: fixed; z-index: 2147483647;"], :root hl-adsense, :root div[data-contentexchange-widget], :root div[data-alias="300x250 Ad 2"], :root div[data-adzone], :root #buy-sell-ads:not(:empty), :root div[data-adunit-path], :root div[data-adname], :root div[data-ad-targeting], :root div[data-ad-region], :root div[data-ad-placeholder], :root div[aria-label="Ads"], :root .google-ad:not(.testAd), :root display-ads, :root #ad_space:not([style^="position: absolute; left: -5000px"]), :root display-ad-component, :root atf-ad-slot, :root aside[id^="adrotate_widgets-"], :root div[style^="position:fixed;inset:0px;z-index:2147483647;background:black;opacity:0.01"], :root aside[aria-label="retailmedia.complimentarySponsored"], :root html[lang] > body#body > * > div.cvh.BlockClicksActivityBusy, :root amp-fx-flying-carpet, :root amp-embed[type="taboola"], :root html[lang="tr"] #aa-wp .rnd-ads-adjustment, :root amp-connatix-player, :root div[id^="google_dfp_"], :root ad-slot, :root a[href^="https://www.purevpn.com/"][href*="&utm_source=aff-"], :root a[href^="https://www.onlineusershielder.com/"], :root html[lang="tr"] > body.has-footer-ad.has-pageskin-desktop a.pageskin-click-right, :root a[href^="https://financeads.net/tc.php?"], :root a[href^="https://www.mrskin.com/tour"], :root a[href^="https://www.infowarsstore.com/"] > img, :root a[href^="https://www.highperformancecpmgate.com/"], :root amp-ad, :root a[href^="https://www.highcpmrevenuenetwork.com/"], :root a[href^="https://www.get-express-vpn.com/offer/"], :root a[href^="https://lnkxt.bannerator.com/"], :root a[href^="https://www.geekbuying.com/dynamic-ads/"], :root #cmdTextDisplay ~ *, :root [href^="https://groorsoa.net/"], :root a[href^="https://www.financeads.net/tc.php?"], :root a[href^="https://www.effectiveratecpm.com/"], :root [href^="https://www.herbanomic.com/"] > img, :root a[href^="https://www.dql2clk.com/"], :root [data-template-type="nativead"], :root a[href^="https://www.adultempire.com/"][href*="?partner_id="], :root a[href^="https://www.nutaku.net/signup/landing/"], :root a[href^="https://www.dating-finder.com/signup/?ai_d="], :root a[href^="https://wolf-327b.com/"], :root body > .content-wrapper > .cf-wrap, :root [data-ad-manager-id]:not([style$="left: -10000px !important; top: -1000px !important;"]):not(.adsbygoogle), :root a[href^="https://voluum.prom-xcams.com/"], :root a[href^="https://twinrdsyte.com/"], :root .category-ads:not(html):not(body):not(.post), :root a[href^="https://twinrdsrv.com/"], :root [href="https://snvhost.com/"], :root a[href^="https://trk.nfl-online-streams.club/"], :root a[href^="https://tracking.avapartner.com/"], :root a[href^="https://track.wg-aff.com"], :root a[href^="https://track.ultravpn.com/"], :root a[href^="https://track.afcpatrk.com/"], :root [href="https://t.me/Russia_Vs_Ukraine_War3"], :root a[href^="https://track.adform.net/"], :root a[href^="https://torguard.net/aff.php"] > img, :root .menu-item a[href^="https://go.rmhfrtnd.com"], :root [data-identity="adhesive-ad"], :root a[href^="https://tc.tradetracker.net/"] > img, :root a[href^="https://tatrck.com/"], :root a[href^="https://click.candyoffers.com/"], :root [href^="https://zstacklife.com/"] img, :root a[href^="https://t.aslnk.link/"], :root .container a[href^="https://go.mavrtracktor.com/"], :root a[onmousedown^="this.href='https://paid.outbrain.com/network/redir?"], :root a[href^="https://t.ajump1.com/"], :root a[href^="https://t.adating.link/"], :root a[href^="https://go.trackitalltheway.com/"], :root [href^="https://track.fiverr.com/visit/"] > img, :root a[href^="https://syndication.exoclick.com/"], :root a[href^="https://syndication.dynsrvtbg.com/"], :root div[data-alias="300x250 Ad 1"], :root a[href^="https://syndicate.contentsserved.com/"], :root a[href^="https://svb-analytics.trackerrr.com/"], :root a[onmousedown^="this.href='https://paid.outbrain.com/network/redir?"] + .ob_source, :root a[href^="http://www.iyalc.com/"], :root a[href^="https://claring-loccelkin.com/"], :root a[href^="https://stardomcoit.com/"], :root a[href^="https://track.aftrk5.com/"], :root a[href^="https://slkmis.com/"], :root a[href^="https://myclick-2.com/"], :root a[href^="https://sexynearme.com/"], :root a[href^="https://s.zlinkt.com/"], :root a[href^="https://s.zlinkr.com/"], :root bottomadblock, :root a[href^="https://s.zlinkd.com/"], :root [href="https://adstub.net/gaza88/"], :root a[href^="https://ad.doubleclick.net/"], :root a[href^="https://static.fleshlight.com/images/banners/"], :root a[href^="https://s.zlink7.com/"], :root a[href^="https://s.ma3ion.com/"], :root a[href^="https://www.privateinternetaccess.com/"] > img, :root a[href^="https://s.gentlefieldpattern.com/"], :root a[href^="https://s.eunow4u.com/"], :root a[href^="https://random-affiliate.atimaze.com/"], :root #downloadAd:not(:empty), :root #kt_player > div[style$="display: block;"][style*="inset: 0px;"], :root a[href^="https://quotationfirearmrevision.com/"], :root a[href^="https://pubads.g.doubleclick.net/"], :root a[href^="https://prf.hn/click/"][href*="/camref:"] > img, :root a[href^="https://www.dating-finder.com/?ai_d="], :root a[href^="https://serve.awmdelivery.com/"], :root a[href^="https://prf.hn/click/"][href*="/adref:"] > img, :root app-ad, :root [href^="https://ap.octopuspop.com/click/"] > img, :root a[href^="https://postback1win.com/"], :root html[lang] > body#body > * > div.cv-xwrapper > div.cvc > div.cv-inner, :root [href^="https://go.mavrtracktor.com/"], :root a[href^="https://a.adtng.com/"], :root a[href^="https://playnano.online/offerwalls/?ref="], :root a[href^="https://mmwebhandler.aff-online.com/"], :root a[href^="https://www.bet365.com/"][href*="affiliate="], :root a[href^="https://pb-track.com/"], :root a[href^="https://pb-front.com/"], :root a[href^="https://paid.outbrain.com/network/redir?"], :root a[href^="https://streamate.com/landing/click/"], :root div[class^="Adstyled__AdWrapper-"], :root a[href^="https://osfultrbriolenai.info/"], :root a[href^="https://upsups.click/"], :root .ad-placeholder:not(#detect, #detect_ad_empire, #filter_ads_by_classname, .adsbox), :root a[href^="https://ndt5.net/"], :root a[href^="https://natour.naughtyamerica.com/track/"], :root a.poly-title[href^="https://www.polybuzz.ai/"], :root a[href^="https://mediaserver.entainpartners.com/renderBanner.do?"], :root [data-ad-name], :root a[href^="https://loboclick.com/"], :root a[href^="https://lead1.pl/"], :root .cta-button[onclick="openUpdateModal()"], :root a[href^="https://landing.brazzersnetwork.com/"], :root a[href^="https://join.bannedsextapes.com/track/"], :root [href^="https://exi8ef83z9.com/"], :root a[href^="https://jaxofuna.com/"], :root a[href^="https://italarizege.xyz/"], :root .category-ad:not(html):not(body):not(.post), :root a[href^="https://s.happyleafmotion.com/"], :root a[href^="https://identicaldrench.com/"], :root a[href^="https://helmethomicidal.com/"], :root #adsquare:not([style^="position: absolute; left: -5000px"]), :root a[href^="https://golinks.work/"], :root a[href^="https://go.xxxjmp.com"], :root [class^="div-gpt-ad"]:not([style^="width: 1px; height: 1px; position: absolute; left: -10000px; top: -"]), :root a[href^="https://zirdough.net/"], :root [class^="tile-picker__CitrusBannerContainer-sc-"], :root a[href^="https://go.xxxiijmp.com"], :root .ad-link:not(.adsbox), :root a[href^="https://go.xtbaffiliates.com/"], :root a[href^="https://go.xlviirdr.com"], :root div[class$="-adlabel"], :root a[href^="https://go.xlviiirdr.com"], :root a[href^="https://go.xlivrdr.com"], :root a[href^="https://ismlks.com/"], :root [href^="https://www.mypillow.com/"] > img, :root a[href^="https://go.xlirdr.com"], :root [data-css-class="dfp-inarticle"], :root a[href^="https://go.tmrjmp.com"], :root a[href^="https://go.markets.com/visit/?bta="], :root a[href^="https://billing.purevpn.com/aff.php"] > img, :root a[href^="https://go.hpyrdr.com/"], :root [data-lnguri^="https://s3.amazonaws.com"], :root a[href^="https://lijavaxa.com/"], :root a[href^="https://go.goaserv.com/"], :root a[href^="https://go.etoro.com/"] > img, :root a[href^="https://go.dmzjmp.com"], :root a[href^="https://www.bang.com/?aff="], :root #mgb-container > #mgb, :root a[href^="https://go.admjmp.com"], :root a[href^="https://get.surfshark.net/aff_c?"][href*="&aff_id="] > img, :root a[href^="https://datewhisper.life/"], :root a[href^="https://click.linksynergy.com/fs-bin/"] > img, :root a[href^="https://get-link.xyz/"], :root a[href^="https://www.mrskin.com/account/"], :root a[id][href="https://hamrocsit.com"][rel^="noopener noreferrer"], :root a[href^="https://www.adskeeper.com"], :root #vidcloud-player > #overlay-container, :root a[data-redirect^="https://paid.outbrain.com/network/redir?"], :root [href^="https://clicks.affstrack.com/"] > img, :root a[href^="https://engine.phn.doublepimp.com/"], :root a[href^="https://dl-protect.net/"], :root a[href*=".foxqck.com/"], :root a[href^="https://ctosrd.com/"], :root a[href^="https://clixtrac.com/"], :root a[href^="https://clicks.pipaffiliates.com/"], :root #ad_footer:not([style^="position: absolute; left: -5000px"]), :root app-advertisement, :root a[href^="https://getmatchedlocally.com/"], :root a[href^="https://clickins.slixa.com/"], :root a[href^="https://combodef.com/"], :root a[href^="https://click.hoolig.app/"], :root a[href^="https://track.totalav.com/"], :root a[href^="https://ctrdwm.com/"], :root img[src^="https://images.purevpnaffiliates.com"], :root a[href^="https://porntubemate.com/"], :root a[href^="https://clickadilla.com/"], :root a[href^="https://click.dtiserv2.com/"], :root a[href^="https://www.adxsrve.com/"], :root a[href^="https://click.Ggpickaff.com/"], :root a[href^="https://go.awdeliverynet.com/"], :root a[href^="https://go.xlvirdr.com"], :root a[href^="https://cam4com.go2cloud.org/"], :root a[onclick^="window.location.replace('https://random-affiliate.atimaze.com/"], :root a[href^="https://bongacams2.com/track?"], :root a[href^="https://t.ajrkm1.com/"], :root #main-content a[href^="https://hub.buzzaffiliates.com/"], :root a[href^="https://bongacams10.com/track?"], :root a[href*=".g2afse.com/"], :root a[href^="https://bodelen.com/"], :root a[href^="//hoodingluster.com/"], :root a[href^="https://black77854.com/"], :root a[href^="https://rixofa.com/"], :root a[href^="https://best-experience-cool.com/"], :root [data-taboola-options], :root a[href^="https://believessway.com/"], :root a[href^="https://Click.ggpickaff.com/"], :root a[href^="https://banners.livepartners.com/"], :root a[href^="http://revolvemockerycopper.com/"], :root a[href^="https://awptjmp.com/"], :root a[href^="https://join.sexworld3d.com/track/"], :root a[href^="https://track.cam4tracking.com/"], :root a[href^="https://aweptjmp.com/"], :root a[href^="https://ausoafab.net/"], :root #tabVideo > .rmedia, :root a[href^="https://aj1070.online/"], :root a[href^="https://ads.planetwin365affiliate.com/"], :root a[href^="https://ads.leovegas.com/"], :root a[href^="https://a.medfoodhome.com/"], :root .nya-slot[style], :root a[href^="https://a.bestcontentweb.top/"], :root a[href^="https://adultfriendfinder.com/go/"], :root a[href^="https://a.bestcontentoperation.top/"], :root a[href^="https://a2.adform.net/"], :root a[href^="https://a.candyai.love/"], :root .banner-img > .pbl, :root [data-m-ad-id], :root a[href^="https://a-ads.com/"], :root [data-testid^="section-AdRowBillboard"], :root .ad-placeholder:not(#filter_ads_by_classname):not(#detect_ad_empire):not(#detect):not(.adsbox), :root broadstreet-zone-container, :root a[href^="https://ak.psaltauw.net/"], :root a[href^="https://1winpb.com/"], :root a[href^="https://chaturbate.com/in/?"], :root a[href^="https://prf.hn/click/"][href*="/creativeref:"] > img, :root a[href*="&maxads="], :root a[href^="http://www.adultempire.com/unlimited/promo?"][href*="&partner_id="], :root a[href^="https://1betandgonow.com/"], :root div[id^="optidigital-adslot"], :root [href^="https://wsup.ai/"], :root a[href^="https://123-stream.org/"], :root a[href^="https://in.rabbtrk.com/"], :root a[href^="http://www.h4trck.com/"], :root [href^="https://a.acebet.com/api/click?"], :root #video_player ~ div[id] div[style^="position:fixed;inset:0px;z-index:"], :root a[href^="http://www.friendlyduck.com/AF_"], :root .btn-primary[onclick="showVerification()"], :root a[href^="http://partners.etoro.com/"], :root [href="https://chaturbate.jjgirls.com/"] > img, :root body div#notificationPopup.notificationPopupBlock, :root a[href^="http://cam4com.go2cloud.org/aff_c?"], :root a[href^="https://ads.betfair.com/redirect.aspx?"], :root #leader_ad:not(:empty), :root amp-ad-custom, :root [href^="http://referrer.website/"], :root a[href^="http://trk.globwo.online/"], :root a-ad, :root a[href^="https://offhandpump.com/"], :root a[href^="http://stickingrepute.com/"], :root #slashboxes > .deals-rail, :root [href^="http://mypillow.com/"] > img, :root a[href^="http://bongacams.com/track?"], :root .fp-ui > a[href][target="_blank"][style^="position: absolute; inset: 0px;"], :root a[href^="//startgaming.net/tienda/" i], :root a[href^="https://a.medfoodsafety.com/"], :root a[href^="//go.eabids.com/"], :root a[href^=" https://www.friendlyduck.com/AF_"], :root [data-cl-spot-id], :root a[href*="/jump/next.php?r="], :root #banner728x90:not([style^="position: absolute; left: -5000px"]), :root div[id^="lazyad-"], :root a[href^="http://com-1.pro/"], :root [href^="https://www.profitablegatecpm.com/"], :root a[href*=".cfm?domain="][href*="&fp="], :root #vstr ~ #overlay, :root [id^="section-ad-banner"], :root [id^="ad_slider"], :root html#html[sti][vic][lang] > body#allbody, :root [href^="https://www.onclickperformance.com/"], :root a[href^="https://www.goldenfrog.com/vyprvpn?offer_id="][href*="&aff_id="], :root a[href^="https://wmctjd.com/"], :root a[href*="//jjgirls.com/sex/Chaturbate"], :root [id^="ad-wrap-"], :root a[href^="http://sarcasmadvisor.com/"], :root .ad-slot:not(.adsbox):not(.adsbygoogle), :root [href^="https://www.restoro.com/"], :root [href^="https://www.targetingpartner.com/"], :root .close-btn2[onclick="closeAd2()"], :root a[href^="https://join.virtuallust3d.com/"], :root .section-subheader > .section-hotel-prices-header, :root [href^="https://www.hostg.xyz/"] > img, :root [href*="passtechusa.com"], :root a[href^="https://bngpt.com/"], :root a[href^="http://adultfriendfinder.com/go/"], :root a[href^="https://fastestvpn.com/lifetime-special-deal?a_aid="], :root a[href^="https://tour.mrskin.com/"], :root a[href^="https://s.zlink3.com/"], :root a[href^="http://sneakyadministration.com/"], :root [href^="https://www.brighteonstore.com/products/"] img, :root citrus-ad-wrapper, :root a[href^="https://go.grinsbest.com/"], :root [href^="https://www.avantlink.com/click.php"] img, :root html.canvas > body.wp-singular + div[popover="manual"], :root a[href^="https://t.acam.link/"], :root a[href^="https://go.strpjmp.com/"], :root [href^="https://url.totaladblock.com/"], :root div[id^="ad-position-"], :root a[href^="https://www.toprevenuegate.com/"], :root a[href^="https://bc.game/"], :root a[href^="https://bngprm.com/"], :root [href^="https://shiftnetwork.infusionsoft.com/go/"] > img, :root a[href^="https://trk.softonixs.xyz/"], :root [href^="https://wct.link/click?"], :root [href^="//look.utndln.com/offer"], :root div[data-adunit], :root app-large-ad, :root [href^="https://turtlebids.irauctions.com/"] img, :root a[href^="https://iqbroker.com/"][href*="?aff="], :root .p-post-ad:not(html):not(body), :root #vplayer ~ img[id][onclick], :root [href^="https://rpwmct.com/"], :root a[href^="https://go.cmtaffiliates.com/"], :root [href^="https://mylead.global/stl/"] > img, :root [data-testid="adBanner-wrapper"], :root [href^="https://optimizedelite.com/"] > img, :root a[href^="https://go.rmishe.com/"], :root [href^="https://ilovemyfreedoms.com/landing-"], :root a[href^="https://go.xxxijmp.com"], :root [href^="https://istlnkcl.com/"], :root a[href^="https://go.nordvpn.net/aff"] > img, :root #tongkatlol ~ script[src^="/shrinke/js/"] ~ .main-content-box + .content-box > div[id][style^="position: fixed; display: block; width: 100%;"], :root .\[\&_\.gdprAdTransparencyCogWheelButton\]\:\!pjra-z-\[5\], :root [href^="http://clicks.totemcash.com/"], :root a[href^="https://ad.zanox.com/ppc/"] > img, :root [data-d-ad-id], :root a[href*=".engine.adglare.net/"], :root [class~="mailpoet_form_popup_overlay"], :root a[href^="https://www.brazzersnetwork.com/landing/"], :root a[href^="https://explore-site.com/"], :root .AdBody:not(body), :root [href="https://adstub.net/indo666/"], :root [href^="https://glersakr.com/"], :root a[href^="https://tm-offers.gamingadult.com/"], :root [href^="https://charmingdatings.life/"], :root [data-id^="div-gpt-ad"], :root a[href^="https://tracker.loropartners.com/"], :root [href^="https://awbbjmp.com/"], :root a[href^="https://go.bushheel.com/"], :root a[href^="https://ctjdwm.com/"], :root a[href^="https://camfapr.com/landing/click/"], :root div[data-ad-wrapper], :root .gnt_em_vp_c[data-g-s="vp_dk"], :root [href="//sexcams.plus/"], :root [href^="http://www.mypillow.com/"] > img, :root a[href^="https://join.virtualtaboo.com/track/"], :root [id^="ad_sky"], :root [name^="google_ads_iframe"], :root [href^="https://go.xlrdr.com"], :root [href*="uselnk.com/"], :root a[href^="https://s.cant3am.com/"], :root .nav-item[href^="https://candyai.gg/"], :root [data-testid^="taboola-"], :root a[href^="https://track.1234sd123.com/"], :root zeus-ad, :root [data-testid="prism-ad-wrapper"], :root [href^="https://antiagingbed.com/discount/"] > img, :root a[href*=".adsrv.eacdn.com/"], :root #teaser1[style^="width:autopx;"], :root [href^="https://www.cloudways.com/en/?id"], :root #modal[doskip][prclck], :root body > .main-wrapper > .main-content > .intro > #checkbox-window, :root [data-uri^="https://s3.amazonaws.com"], :root [href^="https://mypatriotsupply.com/"] > img, :root a[href^="https://go.hpyjmp.com"], :root iframe[scrolling="no"][sandbox*="allow-popups allow-modals"][style^="width: 100%; height: 100%; border: none;"], :root [href^="https://mystore.com/"] > img, :root html[lang] > body.startnew > div#sections > section#section_uname, :root span[data-ez-ph-id], :root [href^="https://track.aftrk1.com/"], :root html[lang] > body:not([style]) > div.captchaBody, :root #adheader:not([style^="position: absolute; left: -5000px"]), :root div[id^="adngin-"], :root [data-rc-widget], :root a[href^="https://stellarcashflow.net/trck/"], :root [data-mobile-ad-id], :root [href^="https://join.playboyplus.com/track/"], :root html > #bw-cf-root, :root [href^="https://go.smljmp.com/"], :root a[href^="https://gamingadlt.com/?offer="], :root a[href^="https://go.bbrdbr.com"], :root a[href^="https://fc.lc/ref/"], :root body.user-clicked[style="cursor: auto;"] > #root > .app-container, :root a[href^="https://pb-imc.com/"], :root a[href^="https://www8.smartadserver.com/"], :root topadblock, :root a[href^="//s.zlinkd.com/"], :root a[href^="https://adclick.g.doubleclick.net/"], :root [data-freestar-ad][id], :root [data-dynamic-ads], :root [data-desktop-ad-id], :root [href^="https://track.wg-aff.com/click"], :root a[href^="https://go.rmhfrtnd.com"], :root [data-asg-ins], :root [data-block-type="ad"], :root [onclick*="content.ad/"], :root [href^="https://go.rdrjmp.com/"], :root a[href^="https://snowdayonline.xyz/"], :root a[href^="https://join.dreamsexworld.com/"], :root a[href^="http://join.brokestraightboys.com/track/"], :root div[id^="div-ads-"], :root [href^="https://rapidgator.net/article/premium/ref/"], :root a[href^="https://track.aftrk3.com/"], :root [href^="https://join3.bannedsextapes.com"], :root [href^="https://join.girlsoutwest.com/"], :root html > body.hold-transition.theme-primary.bg-img[style^="background-image"][style*="wallpaperaccess.com"][style*="background-repeat"][style*="background-size"], :root AMP-AD, :root [data-ad-cls], :root .ad-box:not(#ad-banner):not(:empty), :root body > .wrapper > .card-box > #step-1, :root [data-ez-name], :root a[style="width:100%;height:100%;z-index:10000000000000000;position:absolute;top:0;left:0;"], :root .ob_container .item-container-obpd, :root #ads_top:not(a), :root a[href^="https://go.mnaspm.com/"], :root a[href^="https://service.bv-aff-trx.com/"], :root .ad_slot:not(.text-ad), :root #st-ami + div[id][class*=" "], :root a[href^="https://6-partner.com/"], :root [class^="s2nPlayer"], :root a[href^="https://traffdaq.com/"], :root [data-testid="ad_testID"], :root [href^="https://ad.admitad.com/"], :root [href^="https://mypillow.com/"] > img, :root [data-testid="commercial-label-taboola"], :root a[href^="http://tc.tradetracker.net/"] > img, :root [class^="amp-ad-"], :root .ad_unit:not(.text-ad, .adsbox), :root [href="https://clickaine.com"], :root #playerOverlay[style="position:absolute; z-index:3"], :root a[href^="https://www.liquidfire.mobi/"], :root .grid > .container > #aside-promotion, :root DFP-AD, :root #hero + div.marquee-wrap + section#games + section#features + #download, :root #ads-banner:not([style^="position: absolute; left: -5000px"]), :root AD-SLOT, :root a[href^="https://www.googleadservices.com/pagead/aclk?"] > img, :root body > .security-container[style="opacity: 1; transform: translateY(0px);"], :root a[href^="https://a.bestcontentfood.top/"], :root #kt_player > a[target="_blank"], :root [href^="https://zone.gotrackier.com/"], :root .ad-area:not(.text-ad), :root a[href^="https://ab.advertiserurl.com/aff/"], :root #adSpecial:not(:empty), :root a[data-oburl^="https://paid.outbrain.com/network/redir?"], :root .sidebar-ad:not(.adsbygoogle), :root a[href^="https://s.zlinkn.com/"], :root a[href^="https://go.xxxvjmp.com/"], :root .ads_container:not(.text-ad), :root [class^="adDisplay-module"], :root div[style^="z-index: 999999; background-image: url(\"data:image/gif;base64,"][style$="position: absolute;"], :root [href^="https://affiliate.fastcomet.com/"] > img, :root a[href^="https://t.ajrkm3.com/"], :root in-page-message[doskip], :root [href^="https://aads.com/campaigns/"], :root a[href^="https://juicyads.in/"], :root #ad_728:not([style^="position: absolute; left: -5000px"]), :root div[id^="apn_native_ad_slot_"], :root .adhesion:not(body), :root body > div.captcha-container > div.captcha-card, :root ad-shield-ads, :root a[href^="https://hot-growngames.life/"], :root .ad_box:not(.text-ad), :root [href^="https://wap4dollar.com/ad/nonadult/serve.php"], :root [href="https://jdrucker.com/gold"] > img, :root .fp-player > div[style="position: absolute; inset: 0px; overflow: hidden; z-index: 160; background: transparent; display: block;"], :root .ad-wrap:not(#google_ads_iframe_checktag), :root a[href^="https://www.friendlyduck.com/AF_"], :root html[lang="tr"] #aa-wp + .fixed-footer .footer-ad-container, :root [href^="https://ad1.adfarm1.adition.com/"], :root #teaser3[style^="width:autopx;"], :root a[href^="https://gml-grp.com/"], :root a[href^="https://activate-game.com/"], :root .ob_dual_right > .ob_ads_header ~ .odb_div, :root a[href^="https://wittered-mainging.com/"], :root div[id][style^="position: fixed; inset: 0px; z-index: 2147483647; background: black"][style*="opacity: 0.01"], :root #teaser3[style="width: 100%;text-align: center;display: scroll;position:fixed;bottom: 0;margin: 0 auto;z-index: 103;"], :root html[lang="tr"] > body.has-footer-ad.has-pageskin-desktop a.pageskin-click-left, :root [data-revive-zoneid], :root a[href^="https://go.skinstrip.net"][href*="?campaignId="], :root figure.movie-detail-banner div[style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; z-index: 999; cursor: pointer;"], :root #teaser2[style^="width:autopx;"], :root a[href^="https://losingoldfry.com/"], :root #player div[style$="cursor: pointer; position: absolute; width: 100%; height: 100%; padding: 1rem; z-index: 2147483647;"], :root div[style="position: fixed; inset: 0px; z-index: 2147483647; pointer-events: auto;"], :root .scroll-fixable.rail-right > .deals-rail, :root div[id^="adrotate_widgets-"], :root .Ad-Container:not(.adsbygoogle) { display: none !important; }</style><script>if (window.__embeddedData) { data = window.__embeddedData; saveData(); render(); }</script><style>:root [href="https://adstub.net/cina777/"], :root [href="https://adstub.net/judi89/"], :root [href^="//mage98rquewz.com/"], :root .inset-x-0[x-data="adblockBanner()"], :root #hero a[download="Unicore.zip"], :root body > div[data-captcha-enable="true"] > div.cleanslate[id^="google-captcha-"] > div.captcha-box, :root html[data-scrapbook-source][data-scrapbook-create][data-scrapbook-title] > body.no-js > div.main-wrapper[role="main"] > div.main-content, :root html > body.body > div.container > div.content > form > table.optoutForm, :root html > body > div.container > form#unsubscribe-form[onsubmit="submitUnsubscribeForm(event)"], :root html[lang] > body:not([class]):not([id]):not([style]) > div.background-container > div.container > div.captcha-box, :root .wp-singular > div[data-sm][style*="2147483647"] > iframe[style*="100%"][allow*="clipboard-write"], :root #ipBar + .main, :root #mainBtn[onclick="startVerify()"], :root #turnstile[onclick="handleClick()"], :root body > .page > .verify-row, :root body > .page > #mainVerifyRow, :root html[lang] > body.ishome > div.adult + main.main, :root .container a[title="AI Jerk OFF"][href][target="_blank"], :root body > #mdl-register.modal.anm-e.regnow, :root .flex a[href^="http://adpostup.com/"], :root #app-root ~ a[href][target="_blank"][style="position: fixed;top: 0;left: 0;width: 100%;height: 100%;display: block;z-index: 9999999;cursor: auto"], :root #wrapper ~ a[href][target="_blank"][style="position: fixed;top: 0;left: 0;width: 100%;height: 100%;display: block;z-index: 9999999;cursor: auto"], :root .header ~ div[style^="position:fixed;inset:0;z-index:2147483647;background:black;opacity:0.01;height:"], :root img[width="728"][height="90"], :root button.btn[data-openuri*="/4/"], :root #adbtm[onclick="badr();"], :root #teaser3[style^="width: 100%;height:0;text-align: center;display: scroll;position:fixed;"], :root a[href^="https://www.polybuzz.ai/"] img.responsive-image, :root .kln > a[href^="https://www.polybuzz.ai/"], :root html[lang][style^="--main-bg-color"] > body:not([class]):not([id]) > div#container[style="visibility: visible;"] > div#banner[style="opacity:0"] ~ main:not([class]):not([id]) > div#message, :root #donate > a[href][style][onclick="thank_you()"][target="_blank"][rel="nofollow"], :root .jwplayer ~ div[style="position:absolute;top:0;left:0;width: 100%;height: 100%;z-index:2147483647"], :root iframe.lazyloaded[data-src^="https://rcm-fe.amazon-adsystem.com/"], :root div[style^="position: fixed; inset: 0px; z-index: 2147483647; background: black; opacity: 0.01"], :root .skel-layers-fixed a[href*=".com/smartpop/"], :root [style^="position: fixed; inset: 0px; z-index: 2147483647; background-color: transparent; pointer-events: auto; cursor: auto; margin: 0px; padding: 0px; display: block;"], :root .ads-iframe:not([style="position: absolute; left: -10px; top: -10px;"]), :root .ad-content:not(:empty), :root div[style="position: fixed; display: block; width: 100%; height: 100%; inset: 0px; background-color: rgba(0, 0, 0, 0); z-index: 300000;"], :root #weatherad:not(:empty), :root #topbannerad:not(:empty), :root #topBannerAd:not(:empty), :root #ad_img:not(:empty), :root #adContext:not(:empty), :root .ad-300x250:not(.ads), :root [data-ad-width]:not([style$="left: -10000px !important; top: -1000px !important;"]):not(.adsbygoogle), :root .adunit:not(.text-ad), :root .adslot_1:not(.text-ad), :root [href="https://adstub.net/ratu89/"], :root #ads-footer:not([style^="position: absolute; left: -5000px"]), :root a.tdn[href^="https://landing.brazzersnetwork.com/"], :root #ads-1:not([style^="position: absolute; left: -5000px"]), :root #adframe:not(frameset):not([style^="position: absolute; left: -5000px"]), :root #ad_slot:not([style^="position: absolute; left: -5000px"]), :root #ad_big:not([style^="position: absolute; left: -5000px"]), :root #ad_area:not([style^="position: absolute; left: -5000px"]), :root #ad_300:not([style^="position: absolute; left: -5000px"]), :root a[dontfo=""][style$="position: absolute; z-index: 2147483647;"], :root [href^="https://join.enjoyx.com/track/"], :root a[href*=".click/?z="][href*="&n"], :root [href^="//taghaugh.com/"], :root div[class$="player-promo-col"], :root [href^="https://www.safestcontentgate.com/"], :root [href^="//cadsecs.com/"], :root [href^="//mellowads.com/"], :root [href^="https://fireads.online/"], :root html[lang="vi"] .sspp-area, :root html[lang="tr"] > body.has-footer-ad.has-pageskin-desktop a.pageskin-desktop-wrapper, :root html[lang="tr"] #aa-wp .container-ads-adjustment, :root #videojs ~ div[style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; z-index: 2147483646;"], :root .close-btn4[onclick="closeAd4()"], :root .close-btn3[onclick="closeAd3()"], :root .close-btn[onclick="closeAd()"], :root #go-to-top + div[id][class], :root .bb ~ main#container .containerAds, :root #midadd:not(:empty), :root #adzerk:not(:empty), :root [href^="//x4pollyxxpush.com/"], :root #advert-header:not(:empty), :root div.card > div#cbRow.checkbox-row[onclick="startVerify()"], :root #tongkatlol ~ script[src^="/shrinke/js/"] ~ .main-content-box > div[style="width:100%;height:110px"], :root body > div[style$="z-index: 2147483647; top: 0px; left: 0px; position: fixed; display: block;"], :root html > body > div.container.m-p > #checkbox-window.checkbox-window, :root .container a[href^="https://seduced.com"][href*="ref="], :root #kt_player .fp-brand, :root a[id][href="https://toolkitspro.com"][rel^="noopener noreferrer"], :root #kt_player #ads_iframe, :root .header-container a[href^="https://candyai.gg/"], :root [src^="//dombnrs.com/"], :root [href="https://adstub.net/arab777/"], :root #kt_player ~ #sp-player, :root a[href*="/go.php?a_aid="], :root [href^="https://klsdee.com/"], :root [href^="//producebreed.com/"], :root #modern-player-root ~ div[id^="custom-invisible-overlay-"][class^="custom-popup-overlay-"], :root [href="//xxxrevpushclcdu.com/app.webp"], :root [href^="https://adult.xyz/"], :root [href^="https://popcash.net/"], :root a[href^="http://www.poweredbyliquidfire.mobi/"], :root [href^="https://t.mobtyb.com/"], :root [data-lnguri*="vipbox"], :root .reklama:not(.ads), :root a[href^="https://syndication.exdynsrv.com/splash.php"], :root [href*="/afu.php"], :root span[id^="ezoic-pub-ad-placeholder-"], :root ins.adsbygoogle[data-ad-slot], :root ins.adsbygoogle[data-ad-client], :root img[src^="https://s-img.adskeeper.com/"], :root #download a[download="Unicore.zip"], :root guj-ad, :root gpt-ad, :root div#spot-holder.spot-holder[style="display: block;"], :root div[ow-ad-unit-wrapper], :root div[id^="zergnet-widget"], :root html[lang] > body:not([class]):not([id]):not([style]) > div.container > div.recaptcha-box, :root div[id^="vuukle-ad-"], :root div[id^="taboola-stream-"], :root div[id^="sticky_ad_"], :root div[id^="st"][style^="z-index: 999999999;"], :root div[id^="rc-widget-"], :root html > body > div.content > dl > dd.dd1 > div.min_sider > form#form1[action="unsubscribe.php"], :root div[id^="mrec-leaderboard-"], :root div[id^="gpt_ad_"], :root div[id^="ezoic-pub-ad-"], :root div[id^="dfp-ad-"], :root div[id^="crt-"][style], :root div[id^="adspot-"], :root a[onclick="openAuc();"], :root ps-connatix-module, :root div[id^="ad_position_"], :root [data-ad-module]:not([style$="left: -10000px !important; top: -1000px !important;"]):not(.adsbygoogle), :root a[id][href="https://chpadblock.com/"][rel^="noopener noreferrer"], :root div[id^="ad-div-"], :root div[id*="ScriptRoot"], :root div[id*="MarketGid"], :root [href="https://adstub.net/rusia777/"], :root #banner468:not([style^="position: absolute; left: -5000px"]), :root div[data-id-advertdfpconf], :root div[data-dfp-id], :root div[style="top: 0px; left: 0px; width: 1287px; height: 500px; position: fixed; z-index: 2147483647;"], :root hl-adsense, :root div[data-contentexchange-widget], :root div[data-alias="300x250 Ad 2"], :root div[data-adzone], :root #buy-sell-ads:not(:empty), :root div[data-adunit-path], :root div[data-adname], :root div[data-ad-targeting], :root div[data-ad-region], :root div[data-ad-placeholder], :root div[aria-label="Ads"], :root .google-ad:not(.testAd), :root display-ads, :root #ad_space:not([style^="position: absolute; left: -5000px"]), :root display-ad-component, :root atf-ad-slot, :root aside[id^="adrotate_widgets-"], :root div[style^="position:fixed;inset:0px;z-index:2147483647;background:black;opacity:0.01"], :root aside[aria-label="retailmedia.complimentarySponsored"], :root html[lang] > body#body > * > div.cvh.BlockClicksActivityBusy, :root amp-fx-flying-carpet, :root amp-embed[type="taboola"], :root html[lang="tr"] #aa-wp .rnd-ads-adjustment, :root amp-connatix-player, :root div[id^="google_dfp_"], :root ad-slot, :root a[href^="https://www.purevpn.com/"][href*="&utm_source=aff-"], :root a[href^="https://www.onlineusershielder.com/"], :root html[lang="tr"] > body.has-footer-ad.has-pageskin-desktop a.pageskin-click-right, :root a[href^="https://financeads.net/tc.php?"], :root a[href^="https://www.mrskin.com/tour"], :root a[href^="https://www.infowarsstore.com/"] > img, :root a[href^="https://www.highperformancecpmgate.com/"], :root amp-ad, :root a[href^="https://www.highcpmrevenuenetwork.com/"], :root a[href^="https://www.get-express-vpn.com/offer/"], :root a[href^="https://lnkxt.bannerator.com/"], :root a[href^="https://www.geekbuying.com/dynamic-ads/"], :root #cmdTextDisplay ~ *, :root [href^="https://groorsoa.net/"], :root a[href^="https://www.financeads.net/tc.php?"], :root a[href^="https://www.effectiveratecpm.com/"], :root [href^="https://www.herbanomic.com/"] > img, :root a[href^="https://www.dql2clk.com/"], :root [data-template-type="nativead"], :root a[href^="https://www.adultempire.com/"][href*="?partner_id="], :root a[href^="https://www.nutaku.net/signup/landing/"], :root a[href^="https://www.dating-finder.com/signup/?ai_d="], :root a[href^="https://wolf-327b.com/"], :root body > .content-wrapper > .cf-wrap, :root [data-ad-manager-id]:not([style$="left: -10000px !important; top: -1000px !important;"]):not(.adsbygoogle), :root a[href^="https://voluum.prom-xcams.com/"], :root a[href^="https://twinrdsyte.com/"], :root .category-ads:not(html):not(body):not(.post), :root a[href^="https://twinrdsrv.com/"], :root [href="https://snvhost.com/"], :root a[href^="https://trk.nfl-online-streams.club/"], :root a[href^="https://tracking.avapartner.com/"], :root a[href^="https://track.wg-aff.com"], :root a[href^="https://track.ultravpn.com/"], :root a[href^="https://track.afcpatrk.com/"], :root [href="https://t.me/Russia_Vs_Ukraine_War3"], :root a[href^="https://track.adform.net/"], :root a[href^="https://torguard.net/aff.php"] > img, :root .menu-item a[href^="https://go.rmhfrtnd.com"], :root [data-identity="adhesive-ad"], :root a[href^="https://tc.tradetracker.net/"] > img, :root a[href^="https://tatrck.com/"], :root a[href^="https://click.candyoffers.com/"], :root [href^="https://zstacklife.com/"] img, :root a[href^="https://t.aslnk.link/"], :root .container a[href^="https://go.mavrtracktor.com/"], :root a[onmousedown^="this.href='https://paid.outbrain.com/network/redir?"], :root a[href^="https://t.ajump1.com/"], :root a[href^="https://t.adating.link/"], :root a[href^="https://go.trackitalltheway.com/"], :root [href^="https://track.fiverr.com/visit/"] > img, :root a[href^="https://syndication.exoclick.com/"], :root a[href^="https://syndication.dynsrvtbg.com/"], :root div[data-alias="300x250 Ad 1"], :root a[href^="https://syndicate.contentsserved.com/"], :root a[href^="https://svb-analytics.trackerrr.com/"], :root a[onmousedown^="this.href='https://paid.outbrain.com/network/redir?"] + .ob_source, :root a[href^="http://www.iyalc.com/"], :root a[href^="https://claring-loccelkin.com/"], :root a[href^="https://stardomcoit.com/"], :root a[href^="https://track.aftrk5.com/"], :root a[href^="https://slkmis.com/"], :root a[href^="https://myclick-2.com/"], :root a[href^="https://sexynearme.com/"], :root a[href^="https://s.zlinkt.com/"], :root a[href^="https://s.zlinkr.com/"], :root bottomadblock, :root a[href^="https://s.zlinkd.com/"], :root [href="https://adstub.net/gaza88/"], :root a[href^="https://ad.doubleclick.net/"], :root a[href^="https://static.fleshlight.com/images/banners/"], :root a[href^="https://s.zlink7.com/"], :root a[href^="https://s.ma3ion.com/"], :root a[href^="https://www.privateinternetaccess.com/"] > img, :root a[href^="https://s.gentlefieldpattern.com/"], :root a[href^="https://s.eunow4u.com/"], :root a[href^="https://random-affiliate.atimaze.com/"], :root #downloadAd:not(:empty), :root #kt_player > div[style$="display: block;"][style*="inset: 0px;"], :root a[href^="https://quotationfirearmrevision.com/"], :root a[href^="https://pubads.g.doubleclick.net/"], :root a[href^="https://prf.hn/click/"][href*="/camref:"] > img, :root a[href^="https://www.dating-finder.com/?ai_d="], :root a[href^="https://serve.awmdelivery.com/"], :root a[href^="https://prf.hn/click/"][href*="/adref:"] > img, :root app-ad, :root [href^="https://ap.octopuspop.com/click/"] > img, :root a[href^="https://postback1win.com/"], :root html[lang] > body#body > * > div.cv-xwrapper > div.cvc > div.cv-inner, :root [href^="https://go.mavrtracktor.com/"], :root a[href^="https://a.adtng.com/"], :root a[href^="https://playnano.online/offerwalls/?ref="], :root a[href^="https://mmwebhandler.aff-online.com/"], :root a[href^="https://www.bet365.com/"][href*="affiliate="], :root a[href^="https://pb-track.com/"], :root a[href^="https://pb-front.com/"], :root a[href^="https://paid.outbrain.com/network/redir?"], :root a[href^="https://streamate.com/landing/click/"], :root div[class^="Adstyled__AdWrapper-"], :root a[href^="https://osfultrbriolenai.info/"], :root a[href^="https://upsups.click/"], :root .ad-placeholder:not(#detect, #detect_ad_empire, #filter_ads_by_classname, .adsbox), :root a[href^="https://ndt5.net/"], :root a[href^="https://natour.naughtyamerica.com/track/"], :root a.poly-title[href^="https://www.polybuzz.ai/"], :root a[href^="https://mediaserver.entainpartners.com/renderBanner.do?"], :root [data-ad-name], :root a[href^="https://loboclick.com/"], :root a[href^="https://lead1.pl/"], :root .cta-button[onclick="openUpdateModal()"], :root a[href^="https://landing.brazzersnetwork.com/"], :root a[href^="https://join.bannedsextapes.com/track/"], :root [href^="https://exi8ef83z9.com/"], :root a[href^="https://jaxofuna.com/"], :root a[href^="https://italarizege.xyz/"], :root .category-ad:not(html):not(body):not(.post), :root a[href^="https://s.happyleafmotion.com/"], :root a[href^="https://identicaldrench.com/"], :root a[href^="https://helmethomicidal.com/"], :root #adsquare:not([style^="position: absolute; left: -5000px"]), :root a[href^="https://golinks.work/"], :root a[href^="https://go.xxxjmp.com"], :root [class^="div-gpt-ad"]:not([style^="width: 1px; height: 1px; position: absolute; left: -10000px; top: -"]), :root a[href^="https://zirdough.net/"], :root [class^="tile-picker__CitrusBannerContainer-sc-"], :root a[href^="https://go.xxxiijmp.com"], :root .ad-link:not(.adsbox), :root a[href^="https://go.xtbaffiliates.com/"], :root a[href^="https://go.xlviirdr.com"], :root div[class$="-adlabel"], :root a[href^="https://go.xlviiirdr.com"], :root a[href^="https://go.xlivrdr.com"], :root a[href^="https://ismlks.com/"], :root [href^="https://www.mypillow.com/"] > img, :root a[href^="https://go.xlirdr.com"], :root [data-css-class="dfp-inarticle"], :root a[href^="https://go.tmrjmp.com"], :root a[href^="https://go.markets.com/visit/?bta="], :root a[href^="https://billing.purevpn.com/aff.php"] > img, :root a[href^="https://go.hpyrdr.com/"], :root [data-lnguri^="https://s3.amazonaws.com"], :root a[href^="https://lijavaxa.com/"], :root a[href^="https://go.goaserv.com/"], :root a[href^="https://go.etoro.com/"] > img, :root a[href^="https://go.dmzjmp.com"], :root a[href^="https://www.bang.com/?aff="], :root #mgb-container > #mgb, :root a[href^="https://go.admjmp.com"], :root a[href^="https://get.surfshark.net/aff_c?"][href*="&aff_id="] > img, :root a[href^="https://datewhisper.life/"], :root a[href^="https://click.linksynergy.com/fs-bin/"] > img, :root a[href^="https://get-link.xyz/"], :root a[href^="https://www.mrskin.com/account/"], :root a[id][href="https://hamrocsit.com"][rel^="noopener noreferrer"], :root a[href^="https://www.adskeeper.com"], :root #vidcloud-player > #overlay-container, :root a[data-redirect^="https://paid.outbrain.com/network/redir?"], :root [href^="https://clicks.affstrack.com/"] > img, :root a[href^="https://engine.phn.doublepimp.com/"], :root a[href^="https://dl-protect.net/"], :root a[href*=".foxqck.com/"], :root a[href^="https://ctosrd.com/"], :root a[href^="https://clixtrac.com/"], :root a[href^="https://clicks.pipaffiliates.com/"], :root #ad_footer:not([style^="position: absolute; left: -5000px"]), :root app-advertisement, :root a[href^="https://getmatchedlocally.com/"], :root a[href^="https://clickins.slixa.com/"], :root a[href^="https://combodef.com/"], :root a[href^="https://click.hoolig.app/"], :root a[href^="https://track.totalav.com/"], :root a[href^="https://ctrdwm.com/"], :root img[src^="https://images.purevpnaffiliates.com"], :root a[href^="https://porntubemate.com/"], :root a[href^="https://clickadilla.com/"], :root a[href^="https://click.dtiserv2.com/"], :root a[href^="https://www.adxsrve.com/"], :root a[href^="https://click.Ggpickaff.com/"], :root a[href^="https://go.awdeliverynet.com/"], :root a[href^="https://go.xlvirdr.com"], :root a[href^="https://cam4com.go2cloud.org/"], :root a[onclick^="window.location.replace('https://random-affiliate.atimaze.com/"], :root a[href^="https://bongacams2.com/track?"], :root a[href^="https://t.ajrkm1.com/"], :root #main-content a[href^="https://hub.buzzaffiliates.com/"], :root a[href^="https://bongacams10.com/track?"], :root a[href*=".g2afse.com/"], :root a[href^="https://bodelen.com/"], :root a[href^="//hoodingluster.com/"], :root a[href^="https://black77854.com/"], :root a[href^="https://rixofa.com/"], :root a[href^="https://best-experience-cool.com/"], :root [data-taboola-options], :root a[href^="https://believessway.com/"], :root a[href^="https://Click.ggpickaff.com/"], :root a[href^="https://banners.livepartners.com/"], :root a[href^="http://revolvemockerycopper.com/"], :root a[href^="https://awptjmp.com/"], :root a[href^="https://join.sexworld3d.com/track/"], :root a[href^="https://track.cam4tracking.com/"], :root a[href^="https://aweptjmp.com/"], :root a[href^="https://ausoafab.net/"], :root #tabVideo > .rmedia, :root a[href^="https://aj1070.online/"], :root a[href^="https://ads.planetwin365affiliate.com/"], :root a[href^="https://ads.leovegas.com/"], :root a[href^="https://a.medfoodhome.com/"], :root .nya-slot[style], :root a[href^="https://a.bestcontentweb.top/"], :root a[href^="https://adultfriendfinder.com/go/"], :root a[href^="https://a.bestcontentoperation.top/"], :root a[href^="https://a2.adform.net/"], :root a[href^="https://a.candyai.love/"], :root .banner-img > .pbl, :root [data-m-ad-id], :root a[href^="https://a-ads.com/"], :root [data-testid^="section-AdRowBillboard"], :root .ad-placeholder:not(#filter_ads_by_classname):not(#detect_ad_empire):not(#detect):not(.adsbox), :root broadstreet-zone-container, :root a[href^="https://ak.psaltauw.net/"], :root a[href^="https://1winpb.com/"], :root a[href^="https://chaturbate.com/in/?"], :root a[href^="https://prf.hn/click/"][href*="/creativeref:"] > img, :root a[href*="&maxads="], :root a[href^="http://www.adultempire.com/unlimited/promo?"][href*="&partner_id="], :root a[href^="https://1betandgonow.com/"], :root div[id^="optidigital-adslot"], :root [href^="https://wsup.ai/"], :root a[href^="https://123-stream.org/"], :root a[href^="https://in.rabbtrk.com/"], :root a[href^="http://www.h4trck.com/"], :root [href^="https://a.acebet.com/api/click?"], :root #video_player ~ div[id] div[style^="position:fixed;inset:0px;z-index:"], :root a[href^="http://www.friendlyduck.com/AF_"], :root .btn-primary[onclick="showVerification()"], :root a[href^="http://partners.etoro.com/"], :root [href="https://chaturbate.jjgirls.com/"] > img, :root body div#notificationPopup.notificationPopupBlock, :root a[href^="http://cam4com.go2cloud.org/aff_c?"], :root a[href^="https://ads.betfair.com/redirect.aspx?"], :root #leader_ad:not(:empty), :root amp-ad-custom, :root [href^="http://referrer.website/"], :root a[href^="http://trk.globwo.online/"], :root a-ad, :root a[href^="https://offhandpump.com/"], :root a[href^="http://stickingrepute.com/"], :root #slashboxes > .deals-rail, :root [href^="http://mypillow.com/"] > img, :root a[href^="http://bongacams.com/track?"], :root .fp-ui > a[href][target="_blank"][style^="position: absolute; inset: 0px;"], :root a[href^="//startgaming.net/tienda/" i], :root a[href^="https://a.medfoodsafety.com/"], :root a[href^="//go.eabids.com/"], :root a[href^=" https://www.friendlyduck.com/AF_"], :root [data-cl-spot-id], :root a[href*="/jump/next.php?r="], :root #banner728x90:not([style^="position: absolute; left: -5000px"]), :root div[id^="lazyad-"], :root a[href^="http://com-1.pro/"], :root [href^="https://www.profitablegatecpm.com/"], :root a[href*=".cfm?domain="][href*="&fp="], :root #vstr ~ #overlay, :root [id^="section-ad-banner"], :root [id^="ad_slider"], :root html#html[sti][vic][lang] > body#allbody, :root [href^="https://www.onclickperformance.com/"], :root a[href^="https://www.goldenfrog.com/vyprvpn?offer_id="][href*="&aff_id="], :root a[href^="https://wmctjd.com/"], :root a[href*="//jjgirls.com/sex/Chaturbate"], :root [id^="ad-wrap-"], :root a[href^="http://sarcasmadvisor.com/"], :root .ad-slot:not(.adsbox):not(.adsbygoogle), :root [href^="https://www.restoro.com/"], :root [href^="https://www.targetingpartner.com/"], :root .close-btn2[onclick="closeAd2()"], :root a[href^="https://join.virtuallust3d.com/"], :root .section-subheader > .section-hotel-prices-header, :root [href^="https://www.hostg.xyz/"] > img, :root [href*="passtechusa.com"], :root a[href^="https://bngpt.com/"], :root a[href^="http://adultfriendfinder.com/go/"], :root a[href^="https://fastestvpn.com/lifetime-special-deal?a_aid="], :root a[href^="https://tour.mrskin.com/"], :root a[href^="https://s.zlink3.com/"], :root a[href^="http://sneakyadministration.com/"], :root [href^="https://www.brighteonstore.com/products/"] img, :root citrus-ad-wrapper, :root a[href^="https://go.grinsbest.com/"], :root [href^="https://www.avantlink.com/click.php"] img, :root html.canvas > body.wp-singular + div[popover="manual"], :root a[href^="https://t.acam.link/"], :root a[href^="https://go.strpjmp.com/"], :root [href^="https://url.totaladblock.com/"], :root div[id^="ad-position-"], :root a[href^="https://www.toprevenuegate.com/"], :root a[href^="https://bc.game/"], :root a[href^="https://bngprm.com/"], :root [href^="https://shiftnetwork.infusionsoft.com/go/"] > img, :root a[href^="https://trk.softonixs.xyz/"], :root [href^="https://wct.link/click?"], :root [href^="//look.utndln.com/offer"], :root div[data-adunit], :root app-large-ad, :root [href^="https://turtlebids.irauctions.com/"] img, :root a[href^="https://iqbroker.com/"][href*="?aff="], :root .p-post-ad:not(html):not(body), :root #vplayer ~ img[id][onclick], :root [href^="https://rpwmct.com/"], :root a[href^="https://go.cmtaffiliates.com/"], :root [href^="https://mylead.global/stl/"] > img, :root [data-testid="adBanner-wrapper"], :root [href^="https://optimizedelite.com/"] > img, :root a[href^="https://go.rmishe.com/"], :root [href^="https://ilovemyfreedoms.com/landing-"], :root a[href^="https://go.xxxijmp.com"], :root [href^="https://istlnkcl.com/"], :root a[href^="https://go.nordvpn.net/aff"] > img, :root #tongkatlol ~ script[src^="/shrinke/js/"] ~ .main-content-box + .content-box > div[id][style^="position: fixed; display: block; width: 100%;"], :root .\[\&_\.gdprAdTransparencyCogWheelButton\]\:\!pjra-z-\[5\], :root [href^="http://clicks.totemcash.com/"], :root a[href^="https://ad.zanox.com/ppc/"] > img, :root [data-d-ad-id], :root a[href*=".engine.adglare.net/"], :root [class~="mailpoet_form_popup_overlay"], :root a[href^="https://www.brazzersnetwork.com/landing/"], :root a[href^="https://explore-site.com/"], :root .AdBody:not(body), :root [href="https://adstub.net/indo666/"], :root [href^="https://glersakr.com/"], :root a[href^="https://tm-offers.gamingadult.com/"], :root [href^="https://charmingdatings.life/"], :root [data-id^="div-gpt-ad"], :root a[href^="https://tracker.loropartners.com/"], :root [href^="https://awbbjmp.com/"], :root a[href^="https://go.bushheel.com/"], :root a[href^="https://ctjdwm.com/"], :root a[href^="https://camfapr.com/landing/click/"], :root div[data-ad-wrapper], :root .gnt_em_vp_c[data-g-s="vp_dk"], :root [href="//sexcams.plus/"], :root [href^="http://www.mypillow.com/"] > img, :root a[href^="https://join.virtualtaboo.com/track/"], :root [id^="ad_sky"], :root [name^="google_ads_iframe"], :root [href^="https://go.xlrdr.com"], :root [href*="uselnk.com/"], :root a[href^="https://s.cant3am.com/"], :root .nav-item[href^="https://candyai.gg/"], :root [data-testid^="taboola-"], :root a[href^="https://track.1234sd123.com/"], :root zeus-ad, :root [data-testid="prism-ad-wrapper"], :root [href^="https://antiagingbed.com/discount/"] > img, :root a[href*=".adsrv.eacdn.com/"], :root #teaser1[style^="width:autopx;"], :root [href^="https://www.cloudways.com/en/?id"], :root #modal[doskip][prclck], :root body > .main-wrapper > .main-content > .intro > #checkbox-window, :root [data-uri^="https://s3.amazonaws.com"], :root [href^="https://mypatriotsupply.com/"] > img, :root a[href^="https://go.hpyjmp.com"], :root iframe[scrolling="no"][sandbox*="allow-popups allow-modals"][style^="width: 100%; height: 100%; border: none;"], :root [href^="https://mystore.com/"] > img, :root html[lang] > body.startnew > div#sections > section#section_uname, :root span[data-ez-ph-id], :root [href^="https://track.aftrk1.com/"], :root html[lang] > body:not([style]) > div.captchaBody, :root #adheader:not([style^="position: absolute; left: -5000px"]), :root div[id^="adngin-"], :root [data-rc-widget], :root a[href^="https://stellarcashflow.net/trck/"], :root [data-mobile-ad-id], :root [href^="https://join.playboyplus.com/track/"], :root html > #bw-cf-root, :root [href^="https://go.smljmp.com/"], :root a[href^="https://gamingadlt.com/?offer="], :root a[href^="https://go.bbrdbr.com"], :root a[href^="https://fc.lc/ref/"], :root body.user-clicked[style="cursor: auto;"] > #root > .app-container, :root a[href^="https://pb-imc.com/"], :root a[href^="https://www8.smartadserver.com/"], :root topadblock, :root a[href^="//s.zlinkd.com/"], :root a[href^="https://adclick.g.doubleclick.net/"], :root [data-freestar-ad][id], :root [data-dynamic-ads], :root [data-desktop-ad-id], :root [href^="https://track.wg-aff.com/click"], :root a[href^="https://go.rmhfrtnd.com"], :root [data-asg-ins], :root [data-block-type="ad"], :root [onclick*="content.ad/"], :root [href^="https://go.rdrjmp.com/"], :root a[href^="https://snowdayonline.xyz/"], :root a[href^="https://join.dreamsexworld.com/"], :root a[href^="http://join.brokestraightboys.com/track/"], :root div[id^="div-ads-"], :root [href^="https://rapidgator.net/article/premium/ref/"], :root a[href^="https://track.aftrk3.com/"], :root [href^="https://join3.bannedsextapes.com"], :root [href^="https://join.girlsoutwest.com/"], :root html > body.hold-transition.theme-primary.bg-img[style^="background-image"][style*="wallpaperaccess.com"][style*="background-repeat"][style*="background-size"], :root AMP-AD, :root [data-ad-cls], :root .ad-box:not(#ad-banner):not(:empty), :root body > .wrapper > .card-box > #step-1, :root [data-ez-name], :root a[style="width:100%;height:100%;z-index:10000000000000000;position:absolute;top:0;left:0;"], :root .ob_container .item-container-obpd, :root #ads_top:not(a), :root a[href^="https://go.mnaspm.com/"], :root a[href^="https://service.bv-aff-trx.com/"], :root .ad_slot:not(.text-ad), :root #st-ami + div[id][class*=" "], :root a[href^="https://6-partner.com/"], :root [class^="s2nPlayer"], :root a[href^="https://traffdaq.com/"], :root [data-testid="ad_testID"], :root [href^="https://ad.admitad.com/"], :root [href^="https://mypillow.com/"] > img, :root [data-testid="commercial-label-taboola"], :root a[href^="http://tc.tradetracker.net/"] > img, :root [class^="amp-ad-"], :root .ad_unit:not(.text-ad, .adsbox), :root [href="https://clickaine.com"], :root #playerOverlay[style="position:absolute; z-index:3"], :root a[href^="https://www.liquidfire.mobi/"], :root .grid > .container > #aside-promotion, :root DFP-AD, :root #hero + div.marquee-wrap + section#games + section#features + #download, :root #ads-banner:not([style^="position: absolute; left: -5000px"]), :root AD-SLOT, :root a[href^="https://www.googleadservices.com/pagead/aclk?"] > img, :root body > .security-container[style="opacity: 1; transform: translateY(0px);"], :root a[href^="https://a.bestcontentfood.top/"], :root #kt_player > a[target="_blank"], :root [href^="https://zone.gotrackier.com/"], :root .ad-area:not(.text-ad), :root a[href^="https://ab.advertiserurl.com/aff/"], :root #adSpecial:not(:empty), :root a[data-oburl^="https://paid.outbrain.com/network/redir?"], :root .sidebar-ad:not(.adsbygoogle), :root a[href^="https://s.zlinkn.com/"], :root a[href^="https://go.xxxvjmp.com/"], :root .ads_container:not(.text-ad), :root [class^="adDisplay-module"], :root div[style^="z-index: 999999; background-image: url(\"data:image/gif;base64,"][style$="position: absolute;"], :root [href^="https://affiliate.fastcomet.com/"] > img, :root a[href^="https://t.ajrkm3.com/"], :root in-page-message[doskip], :root [href^="https://aads.com/campaigns/"], :root a[href^="https://juicyads.in/"], :root #ad_728:not([style^="position: absolute; left: -5000px"]), :root div[id^="apn_native_ad_slot_"], :root .adhesion:not(body), :root body > div.captcha-container > div.captcha-card, :root ad-shield-ads, :root a[href^="https://hot-growngames.life/"], :root .ad_box:not(.text-ad), :root [href^="https://wap4dollar.com/ad/nonadult/serve.php"], :root [href="https://jdrucker.com/gold"] > img, :root .fp-player > div[style="position: absolute; inset: 0px; overflow: hidden; z-index: 160; background: transparent; display: block;"], :root .ad-wrap:not(#google_ads_iframe_checktag), :root a[href^="https://www.friendlyduck.com/AF_"], :root html[lang="tr"] #aa-wp + .fixed-footer .footer-ad-container, :root [href^="https://ad1.adfarm1.adition.com/"], :root #teaser3[style^="width:autopx;"], :root a[href^="https://gml-grp.com/"], :root a[href^="https://activate-game.com/"], :root .ob_dual_right > .ob_ads_header ~ .odb_div, :root a[href^="https://wittered-mainging.com/"], :root div[id][style^="position: fixed; inset: 0px; z-index: 2147483647; background: black"][style*="opacity: 0.01"], :root #teaser3[style="width: 100%;text-align: center;display: scroll;position:fixed;bottom: 0;margin: 0 auto;z-index: 103;"], :root html[lang="tr"] > body.has-footer-ad.has-pageskin-desktop a.pageskin-click-left, :root [data-revive-zoneid], :root a[href^="https://go.skinstrip.net"][href*="?campaignId="], :root figure.movie-detail-banner div[style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; z-index: 999; cursor: pointer;"], :root #teaser2[style^="width:autopx;"], :root a[href^="https://losingoldfry.com/"], :root #player div[style$="cursor: pointer; position: absolute; width: 100%; height: 100%; padding: 1rem; z-index: 2147483647;"], :root div[style="position: fixed; inset: 0px; z-index: 2147483647; pointer-events: auto;"], :root .scroll-fixable.rail-right > .deals-rail, :root div[id^="adrotate_widgets-"], :root .Ad-Container:not(.adsbygoogle) { display: none !important; }</style><script>window.__embeddedData = {"files":{"howTo.txt":"password: 1234\n\nCtrl+E or bottom right to edit files.\n\nright click on folders/files to rename/add new/dupe/delete.\n\n----------------------------------------------------------------------\n\nsimple static storage, to save, click export html in top right and rename it to index.html then paste it as a netlify website and rinse and repeat when u make large changes.\n\nmade to keep privacy and avoid paywalls.\n\ncould use github but IMO its too slow for me so i use this\n\n"},"folders":{"Jollivers":{"files":{"additionalOpMode.txt":"download this jar – java-websocket-1.5.3.jar\nget it from here: https://repo1.maven.org/maven2/org/java-websocket/Java-WebSocket/1.5.3/Java-WebSocket-1.5.3.jar\nput it in your teamcode/libs folder (create libs if it’s not there). right click it > add as library.\n\ninstall road runner – super quick. open your teamcode build.gradle, find dependencies { ... } and add these two lines:\n\nimplementation 'com.acmerobotics.roadrunner:core:0.5.6'\nimplementation 'com.acmerobotics.roadrunner:actions:0.5.6'\n\nhit sync now. done.\n\n\n\nrobot code (full opmode)\ncreate a new file called ArcieriDashboard.java and paste this. change the motor names to exactly what you named them in the robot config (frontLeft, frontRight, etc). that’s the only thing you touch\n\npackage org.firstinspires.ftc.teamcode;\n\nimport com.acmerobotics.roadrunner.geometry.Pose2d;\nimport com.acmerobotics.roadrunner.geometry.Vector2d;\nimport com.acmerobotics.roadrunner.trajectory.Trajectory;\nimport com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;\nimport com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;\nimport com.qualcomm.robotcore.eventloop.opmode.OpMode;\nimport com.qualcomm.robotcore.eventloop.opmode.TeleOp;\nimport com.qualcomm.robotcore.hardware.DcMotor;\nimport com.qualcomm.robotcore.hardware.VoltageSensor;\n\nimport org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;\nimport org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;\nimport org.java_websocket.WebSocket;\nimport org.java_websocket.handshake.ClientHandshake;\nimport org.java_websocket.server.WebSocketServer;\nimport org.json.JSONArray;\nimport org.json.JSONObject;\n\nimport java.net.InetSocketAddress;\nimport java.util.concurrent.ConcurrentLinkedQueue;\n\n@TeleOp(name = \"Arcieri Dashboard\", group = \"Test\")\npublic class ArcieriDashboard extends OpMode {\n\n    // change these names to match your config\n    private DcMotor leftFront, rightFront, leftRear, rightRear;\n    private VoltageSensor battery;\n    private Pose2d currentPose = new Pose2d(0, 0, 0);\n    private RobotWebSocketServer wsServer;\n    private Trajectory currentTrajectory;\n    private boolean isFollowing = false;\n    private double startTime = 0;\n\n    @Override\n    public void init() {\n        leftFront = hardwareMap.dcMotor.get(\"frontLeft\");\n        rightFront = hardwareMap.dcMotor.get(\"frontRight\");\n        leftRear = hardwareMap.dcMotor.get(\"backLeft\");\n        rightRear = hardwareMap.dcMotor.get(\"backRight\");\n\n        rightFront.setDirection(DcMotor.Direction.REVERSE);\n        rightRear.setDirection(DcMotor.Direction.REVERSE);\n        battery = hardwareMap.voltageSensor.iterator().next();\n\n        wsServer = new RobotWebSocketServer(8080);\n        wsServer.start();\n\n        // start camera stream – this is the mind blower\n        try {\n            CameraServer.getInstance().startStreaming(320, 240, CameraServer.getInstance().getCamera());\n        } catch (Exception e) {\n            // if no camera, it just won't work – no crash\n        }\n\n        telemetry.addData(\"Status\", \"server ready on 8080\");\n        telemetry.addData(\"IP\", \"connect to robot wifi, use 192.168.43.1\");\n        telemetry.update();\n    }\n\n    @Override\n    public void loop() {\n        JSONObject data = new JSONObject();\n        data.put(\"x\", currentPose.getX());\n        data.put(\"y\", currentPose.getY());\n        data.put(\"heading\", Math.toDegrees(currentPose.getHeading()));\n        data.put(\"battery\", battery.getVoltage());\n        data.put(\"LF_enc\", leftFront.getCurrentPosition());\n        data.put(\"RF_enc\", rightFront.getCurrentPosition());\n        data.put(\"LR_enc\", leftRear.getCurrentPosition());\n        data.put(\"RR_enc\", rightRear.getCurrentPosition());\n        wsServer.sendTelemetry(data);\n\n        if (isFollowing && currentTrajectory != null) {\n            double elapsed = (System.currentTimeMillis() - startTime) / 1000.0;\n            double duration = currentTrajectory.duration();\n            if (elapsed >= duration) {\n                isFollowing = false;\n                currentPose = currentTrajectory.end();\n                stopMotors();\n            } else {\n                double t = elapsed / duration;\n                currentPose = currentTrajectory.get(t);\n            }\n        }\n\n        telemetry.addData(\"Pose\", \"X:%.1f Y:%.1f H:%.1f\", currentPose.getX(), currentPose.getY(), Math.toDegrees(currentPose.getHeading()));\n        telemetry.addData(\"Following\", isFollowing ? \"yes\" : \"no\");\n        telemetry.update();\n    }\n\n    private void stopMotors() {\n        leftFront.setPower(0);\n        rightFront.setPower(0);\n        leftRear.setPower(0);\n        rightRear.setPower(0);\n    }\n\n    @Override\n    public void stop() {\n        if (wsServer != null) wsServer.stopServer();\n    }\n\n    private class RobotWebSocketServer extends WebSocketServer {\n        private ConcurrentLinkedQueue<WebSocket> clients = new ConcurrentLinkedQueue<>();\n\n        public RobotWebSocketServer(int port) {\n            super(new InetSocketAddress(port));\n        }\n\n        @Override\n        public void onOpen(WebSocket conn, ClientHandshake handshake) {\n            clients.add(conn);\n        }\n\n        @Override\n        public void onClose(WebSocket conn, int code, String reason, boolean remote) {\n            clients.remove(conn);\n        }\n\n        @Override\n        public void onMessage(WebSocket conn, String message) {\n            try {\n                JSONObject json = new JSONObject(message);\n                String type = json.getString(\"type\");\n\n                switch (type) {\n                    case \"manualDrive\":\n                        double forward = json.getDouble(\"forward\");\n                        double strafe = json.getDouble(\"strafe\");\n                        double rotate = json.getDouble(\"rotate\");\n                        double max = Math.max(1.0, Math.abs(forward) + Math.abs(strafe) + Math.abs(rotate));\n                        leftFront.setPower((forward + strafe + rotate) / max);\n                        rightFront.setPower((forward - strafe - rotate) / max);\n                        leftRear.setPower((forward - strafe + rotate) / max);\n                        rightRear.setPower((forward + strafe - rotate) / max);\n                        break;\n\n                    case \"motorTest\":\n                        double lf = json.getDouble(\"lf\");\n                        double rf = json.getDouble(\"rf\");\n                        double lr = json.getDouble(\"lr\");\n                        double rr = json.getDouble(\"rr\");\n                        leftFront.setPower(lf);\n                        rightFront.setPower(rf);\n                        leftRear.setPower(lr);\n                        rightRear.setPower(rr);\n                        break;\n\n                    case \"resetPose\":\n                        currentPose = new Pose2d(0, 0, 0);\n                        break;\n\n                    case \"setPID\":\n                        double kp = json.getDouble(\"kp\");\n                        double ki = json.getDouble(\"ki\");\n                        double kd = json.getDouble(\"kd\");\n                        // assign these to your pid controller if you have one\n                        break;\n\n                    case \"runPath\":\n                        JSONObject startObj = json.getJSONObject(\"start\");\n                        JSONArray waypointsArr = json.getJSONArray(\"waypoints\");\n                        Pose2d startPose = new Pose2d(startObj.getDouble(\"x\"), startObj.getDouble(\"y\"), 0);\n                        TrajectoryBuilder builder = new TrajectoryBuilder(startPose, new DriveConstraints(60, 60, 0, Math.PI/2, Math.PI/2));\n                        for (int i = 0; i < waypointsArr.length(); i++) {\n                            JSONObject wp = waypointsArr.getJSONObject(i);\n                            builder.strafeTo(new Vector2d(wp.getDouble(\"x\"), wp.getDouble(\"y\")));\n                        }\n                        currentTrajectory = builder.build();\n                        isFollowing = true;\n                        startTime = System.currentTimeMillis();\n                        currentPose = startPose;\n                        break;\n\n                    case \"stop\":\n                        stopMotors();\n                        isFollowing = false;\n                        break;\n                }\n            } catch (Exception e) {\n                e.printStackTrace();\n            }\n        }\n\n        @Override\n        public void onError(WebSocket conn, Exception ex) {\n            ex.printStackTrace();\n        }\n\n        @Override\n        public void onStart() {\n            System.out.println(\"ws started\");\n        }\n\n        public void sendTelemetry(JSONObject data) {\n            String msg = data.toString();\n            for (WebSocket client : clients) {\n                client.send(msg);\n            }\n        }\n\n        public void stopServer() {\n            try { stop(); } catch (Exception e) {}\n        }\n    }\n}\n\n\n\ndeploy the opmode to the robot (press play in android studio, select the robot, run). on the phone, pick “arcieri dashboard” and hit init.\n\nconnect your laptop to the robot’s wifi (the control hub broadcasts it).\n\nopen https://arcieri.netlify.app/dashboard in chrome. type 192.168.43.1 (or whatever ip your control hub has) and port 8080. hit connect. dot turns\n green.\n\nrobot side – deploy the opmode, select \"arcieri dashboard\" on the phone, hit init.\n\nlaptop side – connect to robot wifi -> go to arcieri.netlify.app/dashboard -> type the robot ip (192.168.43.1) and port 8080, hit connect.\n\ncamera – if your robot has a camera, it'll start streaming automatically. if not, you'll see \"camera offline\" – that's fine.\n\ngraph – as soon as you connect, you'll see the telemetry graph moving.\n\nmotor test – move the sliders and hit apply to spin individual motors. great for diagnosing issues.\n\neverything else – load paths, run, simulate, drive, record, etc.\n"},"folders":{}}}};</script></head>
+<body class="">
+    <div class="app">
         <div class="header">
             <h1>code storage</h1>
-            <span class="ver">v1.0</span>
+            <div class="actions">
+                <button id="themeToggle">🌓</button>
+                <button id="exportHtmlBtn">export HTML</button>
+                <button id="exportJsonBtn">export JSON</button>
+                <label for="importJsonInput">import JSON</label>
+                <input type="file" id="importJsonInput" accept=".json" style="display:none;">
+            </div>
         </div>
         <div class="main">
             <div class="sidebar" id="sidebar">
-                <!-- sidebar rendered by js -->
+                <div class="sidebar-tools">
+                    <input type="text" id="searchBox" placeholder="Search...">
+                    <button id="sortBtn">A↓</button>
+                    <button id="collapseAllBtn">⊟</button>
+                    <button id="expandAllBtn">⊞</button>
+                </div>
+                <div class="folder-actions show" id="folderActions">
+                    <button id="newFolderBtn">new folder</button>
+                    <button id="newFileBtn">new file</button>
+                </div>
+                <div class="tree" id="tree"><div class="tree-item" style="padding-left: 12px;"><span class="icon">📁</span><span class="name">/ (root)</span></div><div><div class="tree-item active" style="padding-left: 12px;"><span class="arrow open">▸</span><span class="icon">📁</span><span class="name">Jollivers</span><span class="del show">×</span></div><div class="children"><div><div class="tree-item" style="padding-left: 44px;"><span class="icon">📄</span><span class="name">additionalOpMode.txt</span><span class="del show">×</span></div></div></div><div class="tree-item active" style="padding-left: 28px;"><span class="icon">📄</span><span class="name">howTo.txt</span><span class="del show">×</span></div></div></div>
             </div>
             <div class="content">
-                <div class="toolbar">
-                    <div class="file-info" id="fileInfo">No file selected</div>
+                <div class="toolbar" id="toolbar">
+                    <div class="file-info" id="fileInfo">/howTo.txt</div>
                     <div class="actions" id="toolbarActions">
-                        <button id="copyBtn" style="display:none;">copy</button>
-                        <button id="downloadBtn" style="display:none;">download</button>
+                        <button id="saveBtn" class="" style="display: inline-block;">save</button>
+                        <button id="autoSaveToggle" class="active" style="display: inline-block;">auto</button>
+                        <button id="runBtn" style="display:none;">run</button>
+                        <button id="deleteFileBtn" class="danger" style="display: inline-block;">delete</button>
+                        <button id="copyBtn" style="display: inline-block;">copy</button>
+                        <button id="downloadBtn" style="display: inline-block;">download</button>
                     </div>
                 </div>
-                <div class="code-area" id="codeArea">
-                    <div class="empty-state" id="emptyState">
-                        <div class="big">~</div>
-                        <div>Select a file from the sidebar</div>
-                    </div>
+                <div class="editor-area" id="editorArea">
+                    <div class="line-numbers" id="lineNumbers" style="font-size: 13px;">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15</div>
+                    <div class="code-area" id="codeArea"><textarea id="editArea" style="white-space:pre-wrap; word-break:break-all; font-size:13px;"></textarea></div>
+                </div>
+                <div class="status-bar">
+                    <span id="statusLeft">Lines: 15, Characters: 465</span>
+                    <span id="statusRight">Size: 465 B</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <button class="editor-toggle" id="editorToggle">editor</button>
+    <button class="editor-toggle active" id="editorToggle">editor on</button>
 
-    <div class="password-modal" id="passwordModal">
+    <!-- Password modal -->
+    <div class="modal" id="passwordModal">
         <div class="box">
             <h3>editor access</h3>
             <div class="error" id="passError">incorrect password</div>
@@ -605,331 +424,554 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="box" id="modalBox">
+    <!-- Generic modal -->
+    <div class="modal" id="modalOverlay">
+        <div class="box">
             <h3 id="modalTitle">New File</h3>
-            <div id="modalBody"></div>
-            <div class="btn-row" id="modalButtons"></div>
+            <div id="modalBody"><label>File name:</label><input type="text"></div>
+            <div class="btn-row" id="modalButtons"><button>cancel</button><button class="primary">ok</button></div>
         </div>
     </div>
 
+    <!-- Unsaved changes modal -->
+    <div class="modal" id="unsavedModal">
+        <div class="box">
+            <h3>Unsaved changes</h3>
+            <p>You have unsaved changes. What would you like to do?</p>
+            <div class="btn-row">
+                <button id="unsavedSave" class="primary">save</button>
+                <button id="unsavedDiscard" class="danger">discard</button>
+                <button id="unsavedCancel">cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete confirmation modal -->
+    <div class="modal" id="deleteModal">
+        <div class="box">
+            <h3>Delete item</h3>
+            <p>Type the name to confirm:</p>
+            <input type="text" id="deleteInput" placeholder="name">
+            <div class="error" id="deleteError">name does not match</div>
+            <div class="btn-row">
+                <button id="deleteCancel">cancel</button>
+                <button id="deleteConfirm" class="danger">delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="context-menu" id="contextMenu" style="left: 374px; top: 213px;"><div>New File</div><div>New Folder</div><div>Rename</div><div>Delete</div></div>
+
     <script>
-        // --- DATA ---
-        let data = {
-            folders: {}
-        };
+        (function() {
+            // State
+            let data = { files: {}, folders: {} };
+            let currentFile = null;
+            let editorMode = false;
+            let selectedFolderPath = '/';
+            let savedContent = '';
+            let editorContent = '';
+            let dirty = false;
+            let autoSave = true;
+            let openFolders = new Set(['/']);
+            let sortAsc = true;
+            let searchTerm = '';
+            let theme = 'dark';
+            let fontSize = 13;
+            let wordWrap = true;
+            let recentFiles = [];
 
-        let currentFile = null; // full path like "/folder/file"
-        let editorMode = false;
-        let selectedFolder = '/';
-
-        // --- HELPERS ---
-        function getFolder(path) {
-            const parts = path.split('/').filter(Boolean);
-            let current = data.folders;
-            for (const p of parts) {
-                if (!current[p]) {
-                    current[p] = { files: {}, folders: {} };
-                }
-                current = current[p];
+            // Storage
+            function saveData() {
+                try {
+                    localStorage.setItem('codeStorageData', JSON.stringify(data));
+                    localStorage.setItem('codeStorageOpenFolders', JSON.stringify([...openFolders]));
+                    localStorage.setItem('codeStorageSettings', JSON.stringify({ sortAsc, theme, fontSize, wordWrap, autoSave }));
+                } catch (e) {}
             }
-            return current;
-        }
 
-        function getItem(path) {
-            const parts = path.split('/').filter(Boolean);
-            if (parts.length === 0) return data.folders;
-            const file = parts.pop();
-            const folder = getFolder('/' + parts.join('/'));
-            if (folder.files && folder.files[file]) {
-                return { type: 'file', content: folder.files[file], parent: folder, name: file };
-            }
-            if (folder.folders && folder.folders[file]) {
-                return { type: 'folder', content: folder.folders[file], parent: folder, name: file };
-            }
-            return null;
-        }
-
-        function getParentFolder(path) {
-            const parts = path.split('/').filter(Boolean);
-            if (parts.length <= 1) return { folder: data.folders, name: '/' };
-            const name = parts.pop();
-            const folder = getFolder('/' + parts.join('/'));
-            return { folder, name };
-        }
-
-        function getAllFiles() {
-            const result = [];
-            function walk(folder, prefix) {
-                for (const [name, f] of Object.entries(folder.folders || {})) {
-                    const path = prefix + '/' + name;
-                    walk(f, path);
-                }
-                for (const [name] of Object.entries(folder.files || {})) {
-                    result.push(prefix + '/' + name);
-                }
-            }
-            walk(data.folders, '');
-            return result;
-        }
-
-        function sortObjectKeys(obj) {
-            const keys = Object.keys(obj).sort((a, b) => a.localeCompare(b));
-            const sorted = {};
-            for (const k of keys) sorted[k] = obj[k];
-            return sorted;
-        }
-
-        function normalizeData() {
-            function sortFolders(folder) {
-                if (folder.folders) {
-                    folder.folders = sortObjectKeys(folder.folders);
-                    for (const f of Object.values(folder.folders)) {
-                        sortFolders(f);
+            function loadData() {
+                try {
+                    const saved = localStorage.getItem('codeStorageData');
+                    if (saved) data = JSON.parse(saved);
+                    const of = localStorage.getItem('codeStorageOpenFolders');
+                    if (of) openFolders = new Set(JSON.parse(of));
+                    const settings = localStorage.getItem('codeStorageSettings');
+                    if (settings) {
+                        const s = JSON.parse(settings);
+                        sortAsc = s.sortAsc ?? sortAsc;
+                        theme = s.theme ?? theme;
+                        fontSize = s.fontSize ?? fontSize;
+                        wordWrap = s.wordWrap ?? wordWrap;
+                        autoSave = s.autoSave ?? autoSave;
                     }
-                }
-                if (folder.files) {
-                    folder.files = sortObjectKeys(folder.files);
-                }
-            }
-            sortFolders(data.folders);
-        }
-
-        function saveData() {
-            normalizeData();
-            try {
-                localStorage.setItem('codeStorageData', JSON.stringify(data));
-            } catch (e) {}
-        }
-
-        function loadData() {
-            try {
-                const saved = localStorage.getItem('codeStorageData');
-                if (saved) {
-                    data = JSON.parse(saved);
-                    normalizeData();
                     return true;
+                } catch (e) {}
+                return false;
+            }
+
+            // Helpers
+            function getFolder(path) {
+                const parts = path.split('/').filter(Boolean);
+                let current = data;
+                for (const p of parts) {
+                    if (!current.folders[p]) current.folders[p] = { files: {}, folders: {} };
+                    current = current.folders[p];
                 }
-            } catch (e) {}
-            return false;
-        }
+                return current;
+            }
+            function getItem(path) {
+                const parts = path.split('/').filter(Boolean);
+                if (!parts.length) return null;
+                const name = parts.pop();
+                const folder = getFolder('/' + parts.join('/'));
+                if (folder.files[name] !== undefined) return { type: 'file', content: folder.files[name], parent: folder, name };
+                if (folder.folders[name]) return { type: 'folder', content: folder.folders[name], parent: folder, name };
+                return null;
+            }
+            function getParentPath(path) {
+                const parts = path.split('/').filter(Boolean);
+                if (parts.length <= 1) return '/';
+                parts.pop();
+                return '/' + parts.join('/');
+            }
+            function getParentFolder(path) { return getFolder(getParentPath(path)); }
+            function fullPath(parentPath, name) { return parentPath === '/' ? '/' + name : parentPath + '/' + name; }
+            function getFileName(path) { return path.split('/').filter(Boolean).pop() || ''; }
+            function escapeHtml(text) { const d = document.createElement('div'); d.textContent = text; return d.innerHTML; }
 
-        // --- RENDER ---
-        function renderSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.innerHTML = '';
-            const folderActions = document.createElement('div');
-            folderActions.className = 'folder-actions' + (editorMode ? ' show' : '');
-            folderActions.id = 'folderActions';
-            folderActions.innerHTML = `
-                <button id="newFolderBtn">new folder</button>
-                <button id="newFileBtn">new file</button>
-            `;
-            sidebar.appendChild(folderActions);
+            function applyTheme() { document.body.classList.toggle('light', theme === 'light'); }
 
-            function renderFolder(folder, path, depth) {
-                const container = document.createElement('div');
+            // Rendering
+            function render() {
+                renderTree();
+                renderContent();
+                updateStatusBar();
+                applyTheme();
+            }
 
-                // Sort keys
-                const keys = Object.keys(folder.folders || {}).sort((a, b) => a.localeCompare(b));
+            function renderTree() {
+                const tree = document.getElementById('tree');
+                tree.innerHTML = '';
+                // Root
+                const rootItem = document.createElement('div');
+                rootItem.className = 'tree-item' + (selectedFolderPath === '/' ? ' active' : '');
+                rootItem.style.paddingLeft = '12px';
+                rootItem.innerHTML = `<span class="icon">📁</span><span class="name">/ (root)</span>`;
+                rootItem.onclick = () => { selectedFolderPath = '/'; renderTree(); };
+                tree.appendChild(rootItem);
 
-                for (const name of keys) {
-                    const childPath = path + '/' + name;
-                    const div = document.createElement('div');
-                    div.className = 'folder-item';
-                    div.style.paddingLeft = (12 + depth * 16) + 'px';
-
-                    const arrow = document.createElement('span');
-                    arrow.className = 'arrow open';
-                    arrow.textContent = '▸';
-                    div.appendChild(arrow);
-
-                    const icon = document.createElement('span');
-                    icon.className = 'icon';
-                    icon.textContent = '📁';
-                    div.appendChild(icon);
-
-                    const nameSpan = document.createElement('span');
-                    nameSpan.className = 'fname';
-                    nameSpan.textContent = name;
-                    div.appendChild(nameSpan);
-
-                    const controls = document.createElement('span');
-                    controls.className = 'edit-controls' + (editorMode ? ' show' : '');
-                    controls.innerHTML = `
-                        <button class="del" data-path="${childPath}">×</button>
-                    `;
-                    div.appendChild(controls);
-
-                    const children = document.createElement('div');
-                    children.className = 'children';
-                    children.dataset.path = childPath;
-
-                    let isOpen = true;
-
-                    div.addEventListener('click', function(e) {
-                        if (e.target.closest('.edit-controls')) return;
-                        isOpen = !isOpen;
-                        children.classList.toggle('collapsed', !isOpen);
-                        arrow.classList.toggle('open', isOpen);
-                    });
-
-                    // Delete folder
-                    controls.querySelector('.del').addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        if (confirm('Delete folder "' + name + '" and all contents?')) {
-                            deleteFolder(childPath);
-                        }
-                    });
-
-                    container.appendChild(div);
-                    container.appendChild(children);
-
-                    const subFolder = folder.folders[name];
-                    const subContainer = renderFolder(subFolder, childPath, depth + 1);
-                    children.appendChild(subContainer);
-
-                    // Render files in this folder
-                    const files = Object.keys(folder.files || {}).sort((a, b) => a.localeCompare(b));
-                    for (const fname of files) {
-                        const filePath = childPath + '/' + fname;
-                        const fdiv = document.createElement('div');
-                        fdiv.className = 'file-item' + (currentFile === filePath ? ' active' : '');
-                        fdiv.style.paddingLeft = (12 + (depth + 1) * 16) + 'px';
-
+                function buildTree(folder, path, depth) {
+                    const container = document.createElement('div');
+                    const folderNames = Object.keys(folder.folders || {}).sort((a,b) => sortAsc ? a.localeCompare(b) : b.localeCompare(a));
+                    for (const name of folderNames) {
+                        const childPath = fullPath(path, name);
+                        if (searchTerm && !name.toLowerCase().includes(searchTerm.toLowerCase())) continue;
+                        const folderDiv = document.createElement('div');
+                        folderDiv.className = 'tree-item' + (selectedFolderPath === childPath ? ' active' : '');
+                        folderDiv.style.paddingLeft = (12 + depth * 16) + 'px';
+                        const arrow = document.createElement('span');
+                        arrow.className = 'arrow' + (openFolders.has(childPath) ? ' open' : '');
+                        arrow.textContent = '▸';
+                        folderDiv.appendChild(arrow);
+                        const icon = document.createElement('span');
+                        icon.className = 'icon';
+                        icon.textContent = '📁';
+                        folderDiv.appendChild(icon);
+                        const nameSpan = document.createElement('span');
+                        nameSpan.className = 'name';
+                        nameSpan.textContent = name;
+                        folderDiv.appendChild(nameSpan);
+                        const del = document.createElement('span');
+                        del.className = 'del' + (editorMode ? ' show' : '');
+                        del.textContent = '×';
+                        del.onclick = (e) => { e.stopPropagation(); confirmDeleteFolder(childPath, name); };
+                        folderDiv.appendChild(del);
+                        folderDiv.onclick = () => {
+                            if (openFolders.has(childPath)) openFolders.delete(childPath);
+                            else openFolders.add(childPath);
+                            selectedFolderPath = childPath;
+                            saveData();
+                            renderTree();
+                        };
+                        container.appendChild(folderDiv);
+                        const childrenContainer = document.createElement('div');
+                        childrenContainer.className = 'children' + (openFolders.has(childPath) ? '' : ' collapsed');
+                        childrenContainer.appendChild(buildTree(folder.folders[name], childPath, depth + 1));
+                        container.appendChild(childrenContainer);
+                    }
+                    const fileNames = Object.keys(folder.files || {}).sort((a,b) => sortAsc ? a.localeCompare(b) : b.localeCompare(a));
+                    for (const name of fileNames) {
+                        const filePath = fullPath(path, name);
+                        if (searchTerm && !name.toLowerCase().includes(searchTerm.toLowerCase())) continue;
+                        const fileDiv = document.createElement('div');
+                        fileDiv.className = 'tree-item' + (currentFile === filePath ? ' active' : '');
+                        fileDiv.style.paddingLeft = (12 + (depth + 1) * 16) + 'px';
                         const icon = document.createElement('span');
                         icon.className = 'icon';
                         icon.textContent = '📄';
-                        fdiv.appendChild(icon);
-
+                        fileDiv.appendChild(icon);
                         const nameSpan = document.createElement('span');
                         nameSpan.className = 'name';
-                        nameSpan.textContent = fname;
-                        fdiv.appendChild(nameSpan);
+                        nameSpan.textContent = name;
+                        fileDiv.appendChild(nameSpan);
+                        const del = document.createElement('span');
+                        del.className = 'del' + (editorMode ? ' show' : '');
+                        del.textContent = '×';
+                        del.onclick = (e) => { e.stopPropagation(); confirmDeleteFile(filePath, name); };
+                        fileDiv.appendChild(del);
+                        fileDiv.onclick = () => openFile(filePath);
+                        fileDiv.oncontextmenu = (e) => { e.preventDefault(); showContextMenu(e.clientX, e.clientY, filePath, 'file'); };
+                        container.appendChild(fileDiv);
+                    }
+                    return container;
+                }
+                tree.appendChild(buildTree(data, '/', 0));
+                document.getElementById('folderActions').classList.toggle('show', editorMode);
+            }
 
-                        const controls = document.createElement('span');
-                        controls.className = 'edit-controls' + (editorMode ? ' show' : '');
-                        controls.innerHTML = `
-                            <button class="del" data-path="${filePath}">×</button>
-                        `;
-                        fdiv.appendChild(controls);
+            function renderContent() {
+                const codeArea = document.getElementById('codeArea');
+                const lineNumbers = document.getElementById('lineNumbers');
+                const saveBtn = document.getElementById('saveBtn');
+                const autoSaveToggle = document.getElementById('autoSaveToggle');
+                const runBtn = document.getElementById('runBtn');
+                const deleteFileBtn = document.getElementById('deleteFileBtn');
+                const copyBtn = document.getElementById('copyBtn');
+                const downloadBtn = document.getElementById('downloadBtn');
 
-                        fdiv.addEventListener('click', function(e) {
-                            if (e.target.closest('.edit-controls')) return;
-                            openFile(filePath);
-                        });
+                if (!currentFile) {
+                    codeArea.innerHTML = '<div class="empty-state"><div class="big">~</div><div>Select a file from the sidebar</div></div>';
+                    lineNumbers.innerHTML = '';
+                    document.getElementById('fileInfo').textContent = 'No file selected';
+                    saveBtn.style.display = 'none';
+                    autoSaveToggle.style.display = 'none';
+                    runBtn.style.display = 'none';
+                    deleteFileBtn.style.display = 'none';
+                    copyBtn.style.display = 'none';
+                    downloadBtn.style.display = 'none';
+                    return;
+                }
+                const item = getItem(currentFile);
+                if (!item || item.type !== 'file') {
+                    codeArea.innerHTML = '<div class="empty-state"><div class="big">~</div><div>File not found</div></div>';
+                    lineNumbers.innerHTML = '';
+                    document.getElementById('fileInfo').textContent = 'File not found';
+                    return;
+                }
+                document.getElementById('fileInfo').textContent = currentFile;
+                saveBtn.style.display = editorMode ? 'inline-block' : 'none';
+                saveBtn.classList.toggle('primary', dirty);
+                autoSaveToggle.style.display = editorMode ? 'inline-block' : 'none';
+                autoSaveToggle.classList.toggle('active', autoSave);
+                runBtn.style.display = (['html','htm','svg'].includes(currentFile.split('.').pop().toLowerCase())) ? 'inline-block' : 'none';
+                deleteFileBtn.style.display = 'inline-block';
+                copyBtn.style.display = 'inline-block';
+                downloadBtn.style.display = 'inline-block';
 
-                        controls.querySelector('.del').addEventListener('click', function(e) {
-                            e.stopPropagation();
-                            if (confirm('Delete file "' + fname + '"?')) {
-                                deleteFile(filePath);
-                            }
-                        });
+                if (editorMode) {
+                    codeArea.innerHTML = `<textarea id="editArea" style="white-space:${wordWrap ? 'pre-wrap' : 'pre'}; word-break:${wordWrap ? 'break-all' : 'normal'}; font-size:${fontSize}px;"></textarea>`;
+                    const textarea = document.getElementById('editArea');
+                    textarea.value = editorContent;
+                    textarea.addEventListener('input', function() {
+                        editorContent = this.value;
+                        dirty = (editorContent !== savedContent);
+                        saveBtn.classList.toggle('primary', dirty);
+                        updateLineNumbers(textarea);
+                        updateStatusBar();
+                        if (autoSave && dirty) saveCurrentFile();
+                    });
+                    textarea.addEventListener('scroll', () => { lineNumbers.scrollTop = textarea.scrollTop; });
+                    textarea.focus();
+                    updateLineNumbers(textarea);
+                } else {
+                    codeArea.innerHTML = `<pre style="white-space:${wordWrap ? 'pre-wrap' : 'pre'}; word-break:${wordWrap ? 'break-all' : 'normal'}; font-size:${fontSize}px;">${escapeHtml(item.content || '')}</pre>`;
+                    lineNumbers.innerHTML = '';
+                    const lineCount = (item.content || '').split('\n').length;
+                    lineNumbers.innerHTML = Array.from({length: lineCount}, (_, i) => i+1).join('<br>');
+                }
+                updateStatusBar();
+            }
 
-                        children.appendChild(fdiv);
+            function updateLineNumbers(textarea) {
+                const lineNumbers = document.getElementById('lineNumbers');
+                const lines = textarea.value.split('\n');
+                lineNumbers.innerHTML = lines.map((_, i) => i+1).join('<br>');
+                lineNumbers.scrollTop = textarea.scrollTop;
+                lineNumbers.style.fontSize = textarea.style.fontSize || fontSize + 'px';
+            }
+
+            function updateStatusBar() {
+                const statusLeft = document.getElementById('statusLeft');
+                const statusRight = document.getElementById('statusRight');
+                if (!currentFile) { statusLeft.textContent = 'Ready'; statusRight.textContent = ''; return; }
+                const item = getItem(currentFile);
+                if (!item || item.type !== 'file') { statusLeft.textContent = 'File not found'; statusRight.textContent = ''; return; }
+                const content = editorMode ? editorContent : item.content || '';
+                const lines = content.split('\n');
+                const chars = content.length;
+                const size = new Blob([content]).size;
+                statusLeft.textContent = `Lines: ${lines.length}, Characters: ${chars}`;
+                statusRight.textContent = `Size: ${size < 1024 ? size + ' B' : (size/1024).toFixed(1) + ' KB'}`;
+            }
+
+            // File operations
+            function openFile(path) {
+                if (currentFile === path) return;
+                if (dirty) {
+                    showUnsavedModal(() => { saveCurrentFile(); proceedToOpen(path); },
+                                   () => { discardChanges(); proceedToOpen(path); },
+                                   () => {});
+                } else {
+                    proceedToOpen(path);
+                }
+            }
+            function proceedToOpen(path) {
+                currentFile = path;
+                const item = getItem(path);
+                if (item && item.type === 'file') {
+                    savedContent = item.content || '';
+                    editorContent = savedContent;
+                    dirty = false;
+                }
+                render();
+            }
+            function saveCurrentFile() {
+                if (currentFile && dirty) {
+                    const item = getItem(currentFile);
+                    if (item && item.type === 'file') {
+                        // FIX: directly update original data
+                        const parent = getParentFolder(currentFile);
+                        const name = getFileName(currentFile);
+                        parent.files[name] = editorContent;
+                        savedContent = editorContent;
+                        dirty = false;
+                        saveData();
+                        render();
                     }
                 }
-
-                return container;
+            }
+            function discardChanges() {
+                dirty = false;
+                editorContent = savedContent;
+                render();
+            }
+            function createFolder(name) {
+                if (!name) return;
+                const folder = getFolder(selectedFolderPath);
+                if (folder.folders[name]) { alert('Folder already exists'); return; }
+                folder.folders[name] = { files: {}, folders: {} };
+                openFolders.add(selectedFolderPath);
+                saveData();
+                render();
+            }
+            function createFile(name) {
+                if (!name) return;
+                const folder = getFolder(selectedFolderPath);
+                if (folder.files[name] !== undefined) { alert('File already exists'); return; }
+                folder.files[name] = '';
+                openFolders.add(selectedFolderPath);
+                saveData();
+                render();
+                openFile(fullPath(selectedFolderPath, name));
+            }
+            function confirmDeleteFile(path, name) {
+                openDeleteModal(name, () => {
+                    const parent = getParentFolder(path);
+                    delete parent.files[name];
+                    if (currentFile === path) currentFile = null;
+                    saveData();
+                    render();
+                });
+            }
+            function confirmDeleteFolder(path, name) {
+                openDeleteModal(name, () => {
+                    const parent = getParentFolder(path);
+                    delete parent.folders[name];
+                    if (currentFile && currentFile.startsWith(path)) currentFile = null;
+                    openFolders.delete(path);
+                    saveData();
+                    render();
+                });
+            }
+            function openDeleteModal(expectedName, onConfirm) {
+                const modal = document.getElementById('deleteModal');
+                const input = document.getElementById('deleteInput');
+                const error = document.getElementById('deleteError');
+                modal.classList.add('show');
+                input.value = '';
+                error.classList.remove('show');
+                input.focus();
+                const confirmBtn = document.getElementById('deleteConfirm');
+                const cancelBtn = document.getElementById('deleteCancel');
+                confirmBtn.onclick = () => {
+                    if (input.value === expectedName) { modal.classList.remove('show'); onConfirm(); }
+                    else { error.classList.add('show'); input.focus(); }
+                };
+                cancelBtn.onclick = () => modal.classList.remove('show');
+                input.onkeydown = (e) => { if (e.key === 'Enter') confirmBtn.click(); if (e.key === 'Escape') modal.classList.remove('show'); };
             }
 
-            const root = renderFolder(data.folders, '', 0);
-            sidebar.appendChild(root);
+            // Modals
+            function showModal(title, label, isTextarea, initialValue, callback) {
+                const overlay = document.getElementById('modalOverlay');
+                document.getElementById('modalTitle').textContent = title;
+                const body = document.getElementById('modalBody');
+                body.innerHTML = '';
+                const labelEl = document.createElement('label');
+                labelEl.textContent = label;
+                body.appendChild(labelEl);
+                let input;
+                if (isTextarea) {
+                    input = document.createElement('textarea');
+                    input.value = initialValue || '';
+                } else {
+                    input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = initialValue || '';
+                }
+                body.appendChild(input);
+                const buttons = document.getElementById('modalButtons');
+                buttons.innerHTML = '';
+                const cancelBtn = document.createElement('button');
+                cancelBtn.textContent = 'cancel';
+                cancelBtn.onclick = () => overlay.classList.remove('show');
+                buttons.appendChild(cancelBtn);
+                const okBtn = document.createElement('button');
+                okBtn.className = 'primary';
+                okBtn.textContent = 'ok';
+                okBtn.onclick = () => { overlay.classList.remove('show'); callback(input.value); };
+                buttons.appendChild(okBtn);
+                overlay.classList.add('show');
+                input.focus();
+            }
+            function showUnsavedModal(onSave, onDiscard, onCancel) {
+                const modal = document.getElementById('unsavedModal');
+                modal.classList.add('show');
+                document.getElementById('unsavedSave').onclick = () => { modal.classList.remove('show'); onSave(); };
+                document.getElementById('unsavedDiscard').onclick = () => { modal.classList.remove('show'); onDiscard(); };
+                document.getElementById('unsavedCancel').onclick = () => { modal.classList.remove('show'); onCancel(); };
+            }
 
-            // Event listeners for new buttons
-            document.getElementById('newFolderBtn').addEventListener('click', function() {
-                showModal('New Folder', 'Enter folder name:', 'text', '', function(val) {
-                    if (val && val.trim()) {
-                        createFolder(val.trim());
-                    }
+            // Context menu
+            function showContextMenu(x, y, path, type) {
+                const menu = document.getElementById('contextMenu');
+                menu.innerHTML = '';
+                const items = [
+                    { label: 'New File', action: () => { selectedFolderPath = type==='file' ? getParentPath(path) : path; showModal('New File', 'File name:', false, '', (val)=>createFile(val)); } },
+                    { label: 'New Folder', action: () => { selectedFolderPath = type==='file' ? getParentPath(path) : path; showModal('New Folder', 'Folder name:', false, '', (val)=>createFolder(val)); } },
+                    { label: 'Rename', action: () => { showModal('Rename', 'New name:', false, getFileName(path), (val)=>renameItem(path, val)); } },
+                    { label: 'Delete', action: () => { if (type==='file') confirmDeleteFile(path, getFileName(path)); else confirmDeleteFolder(path, getFileName(path)); } },
+                ];
+                if (!editorMode) items.splice(0,2);
+                items.forEach(item => {
+                    const div = document.createElement('div');
+                    div.textContent = item.label;
+                    div.onclick = () => { menu.classList.remove('show'); item.action(); };
+                    menu.appendChild(div);
                 });
+                menu.style.left = x + 'px';
+                menu.style.top = y + 'px';
+                menu.classList.add('show');
+                setTimeout(() => document.addEventListener('click', function close(e) {
+                    if (!menu.contains(e.target)) { menu.classList.remove('show'); document.removeEventListener('click', close); }
+                }, { once: true }), 0);
+            }
+
+            function renameItem(path, newName) {
+                if (!newName || newName.includes('/')) return;
+                const item = getItem(path);
+                if (!item) return;
+                const parent = getParentFolder(path);
+                const oldName = getFileName(path);
+                if (item.type === 'file') {
+                    if (parent.files[newName] !== undefined && newName !== oldName) { alert('Name exists'); return; }
+                    parent.files[newName] = parent.files[oldName];
+                    delete parent.files[oldName];
+                    if (currentFile === path) currentFile = fullPath(getParentPath(path), newName);
+                } else {
+                    if (parent.folders[newName]) { alert('Name exists'); return; }
+                    parent.folders[newName] = parent.folders[oldName];
+                    delete parent.folders[oldName];
+                    if (selectedFolderPath === path) selectedFolderPath = fullPath(getParentPath(path), newName);
+                }
+                saveData();
+                render();
+            }
+
+            // Editor mode
+            let isEditorActive = false;
+            const editorToggle = document.getElementById('editorToggle');
+            editorToggle.onclick = () => {
+                if (!isEditorActive) {
+                    document.getElementById('passwordModal').classList.add('show');
+                    document.getElementById('passInput').value = '';
+                    document.getElementById('passError').classList.remove('show');
+                    document.getElementById('passInput').focus();
+                } else {
+                    if (dirty) {
+                        showUnsavedModal(() => { saveCurrentFile(); disableEditor(); },
+                                       () => { discardChanges(); disableEditor(); },
+                                       () => {});
+                    } else disableEditor();
+                }
+            };
+            function disableEditor() {
+                isEditorActive = false;
+                editorMode = false;
+                editorToggle.textContent = 'editor';
+                editorToggle.classList.remove('active');
+                render();
+            }
+            document.getElementById('passCancel').onclick = () => document.getElementById('passwordModal').classList.remove('show');
+            document.getElementById('passSubmit').onclick = () => {
+                if (document.getElementById('passInput').value === '1234') {
+                    document.getElementById('passwordModal').classList.remove('show');
+                    isEditorActive = true;
+                    editorMode = true;
+                    editorToggle.textContent = 'editor on';
+                    editorToggle.classList.add('active');
+                    render();
+                } else {
+                    document.getElementById('passError').classList.add('show');
+                    document.getElementById('passInput').value = '';
+                    document.getElementById('passInput').focus();
+                }
+            };
+            document.getElementById('passInput').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') document.getElementById('passSubmit').click();
+                if (e.key === 'Escape') document.getElementById('passCancel').click();
             });
 
-            document.getElementById('newFileBtn').addEventListener('click', function() {
-                showModal('New File', 'Enter file name (with extension):', 'text', '', function(val) {
-                    if (val && val.trim()) {
-                        createFile(val.trim(), '');
-                    }
-                });
-            });
-
-            updateToolbar();
-        }
-
-        function renderContent() {
-            const codeArea = document.getElementById('codeArea');
-            const emptyState = document.getElementById('emptyState');
-            const fileInfo = document.getElementById('fileInfo');
-            const copyBtn = document.getElementById('copyBtn');
-            const downloadBtn = document.getElementById('downloadBtn');
-
-            if (!currentFile) {
-                emptyState.style.display = 'flex';
-                codeArea.innerHTML = '<div class="empty-state" style="display:flex;"><div class="big">~</div><div>Select a file from the sidebar</div></div>';
-                fileInfo.textContent = 'No file selected';
-                copyBtn.style.display = 'none';
-                downloadBtn.style.display = 'none';
-                return;
-            }
-
-            const item = getItem(currentFile);
-            if (!item || item.type !== 'file') {
-                emptyState.style.display = 'flex';
-                codeArea.innerHTML = '<div class="empty-state" style="display:flex;"><div class="big">~</div><div>File not found</div></div>';
-                fileInfo.textContent = 'File not found';
-                copyBtn.style.display = 'none';
-                downloadBtn.style.display = 'none';
-                return;
-            }
-
-            emptyState.style.display = 'none';
-            const content = item.content || '';
-            fileInfo.textContent = currentFile;
-            copyBtn.style.display = 'inline-block';
-            downloadBtn.style.display = 'inline-block';
-
-            if (editorMode) {
-                codeArea.innerHTML = `<textarea id="editArea">${escapeHtml(content)}</textarea>`;
-                const textarea = document.getElementById('editArea');
-                textarea.addEventListener('input', function() {
-                    const item2 = getItem(currentFile);
-                    if (item2 && item2.type === 'file') {
-                        item2.content = this.value;
-                        saveData();
-                    }
-                });
-            } else {
-                codeArea.innerHTML = `<pre style="margin:0;white-space:pre-wrap;word-break:break-all;font-family:inherit;">${escapeHtml(content)}</pre>`;
-            }
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function updateToolbar() {
-            const copyBtn = document.getElementById('copyBtn');
-            const downloadBtn = document.getElementById('downloadBtn');
-
-            copyBtn.onclick = function() {
+            // Toolbar buttons
+            document.getElementById('newFolderBtn').onclick = () => showModal('New Folder', 'Folder name:', false, '', (val) => createFolder(val));
+            document.getElementById('newFileBtn').onclick = () => showModal('New File', 'File name:', false, '', (val) => createFile(val));
+            document.getElementById('saveBtn').onclick = saveCurrentFile;
+            document.getElementById('autoSaveToggle').onclick = function() { autoSave = !autoSave; this.classList.toggle('active', autoSave); saveData(); };
+            document.getElementById('runBtn').onclick = () => {
+                if (!currentFile) return;
+                const item = getItem(currentFile);
+                if (item && item.type === 'file') {
+                    const blob = new Blob([item.content || ''], { type: 'text/html' });
+                    window.open(URL.createObjectURL(blob), '_blank');
+                }
+            };
+            document.getElementById('deleteFileBtn').onclick = () => { if (currentFile) confirmDeleteFile(currentFile, getFileName(currentFile)); };
+            document.getElementById('copyBtn').onclick = function() {
                 if (!currentFile) return;
                 const item = getItem(currentFile);
                 if (item && item.type === 'file') {
                     navigator.clipboard.writeText(item.content || '').then(() => {
-                        const orig = this.textContent;
                         this.textContent = 'copied!';
-                        setTimeout(() => { this.textContent = orig; }, 1500);
-                    }).catch(() => {});
+                        setTimeout(() => this.textContent = 'copy', 1500);
+                    });
                 }
             };
-
-            downloadBtn.onclick = function() {
+            document.getElementById('downloadBtn').onclick = function() {
                 if (!currentFile) return;
                 const item = getItem(currentFile);
                 if (item && item.type === 'file') {
-                    const name = currentFile.split('/').pop();
+                    const name = getFileName(currentFile) || 'file.txt';
                     const blob = new Blob([item.content || ''], { type: 'text/plain' });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
@@ -939,227 +981,108 @@
                     URL.revokeObjectURL(url);
                 }
             };
-        }
 
-        // --- OPERATIONS ---
-        function openFile(path) {
-            currentFile = path;
-            renderSidebar();
-            renderContent();
-        }
-
-        function createFolder(name) {
-            if (!name || name.includes('/') || name.includes('\\')) return;
-            const folder = getFolder(selectedFolder);
-            if (folder.folders[name]) { alert('Folder already exists'); return; }
-            folder.folders[name] = { files: {}, folders: {} };
-            saveData();
-            renderSidebar();
-        }
-
-        function createFile(name, content) {
-            if (!name || name.includes('/') || name.includes('\\')) return;
-            const folder = getFolder(selectedFolder);
-            if (folder.files[name]) { alert('File already exists'); return; }
-            folder.files[name] = content || '';
-            saveData();
-            renderSidebar();
-            openFile(selectedFolder + '/' + name);
-        }
-
-        function deleteFile(path) {
-            const parent = getParentFolder(path);
-            if (parent.folder && parent.folder.files) {
-                delete parent.folder.files[parent.name];
-                if (currentFile === path) {
-                    currentFile = null;
-                }
-                saveData();
-                renderSidebar();
-                renderContent();
-            }
-        }
-
-        function deleteFolder(path) {
-            const parent = getParentFolder(path);
-            if (parent.folder && parent.folder.folders) {
-                delete parent.folder.folders[parent.name];
-                if (currentFile && currentFile.startsWith(path)) {
-                    currentFile = null;
-                }
-                saveData();
-                renderSidebar();
-                renderContent();
-            }
-        }
-
-        // --- MODAL ---
-        function showModal(title, label, inputType, initialValue, callback) {
-            const overlay = document.getElementById('modalOverlay');
-            const box = document.getElementById('modalBox');
-            const titleEl = document.getElementById('modalTitle');
-            const body = document.getElementById('modalBody');
-            const buttons = document.getElementById('modalButtons');
-
-            titleEl.textContent = title;
-            body.innerHTML = '';
-            buttons.innerHTML = '';
-
-            const labelEl = document.createElement('label');
-            labelEl.textContent = label;
-            labelEl.style.display = 'block';
-            labelEl.style.marginBottom = '4px';
-            labelEl.style.fontSize = '13px';
-            labelEl.style.color = '#8b949e';
-            body.appendChild(labelEl);
-
-            if (inputType === 'textarea') {
-                const ta = document.createElement('textarea');
-                ta.id = 'modalInput';
-                ta.placeholder = 'Paste your code here...';
-                ta.value = initialValue || '';
-                body.appendChild(ta);
-                setTimeout(() => ta.focus(), 100);
-            } else {
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.id = 'modalInput';
-                input.placeholder = 'Enter name...';
-                input.value = initialValue || '';
-                body.appendChild(input);
-                setTimeout(() => input.focus(), 100);
-            }
-
-            const cancelBtn = document.createElement('button');
-            cancelBtn.textContent = 'cancel';
-            cancelBtn.onclick = function() {
-                overlay.classList.remove('show');
+                        // Sidebar tools
+            document.getElementById('searchBox').oninput = (e) => {
+                searchTerm = e.target.value;
+                renderTree();
             };
-            buttons.appendChild(cancelBtn);
 
-            const okBtn = document.createElement('button');
-            okBtn.className = 'primary';
-            okBtn.textContent = 'ok';
-            okBtn.onclick = function() {
-                const val = document.getElementById('modalInput').value;
-                overlay.classList.remove('show');
-                if (callback) callback(val);
+            document.getElementById('sortBtn').onclick = function() {
+                sortAsc = !sortAsc;
+                this.textContent = sortAsc ? 'A↓' : 'A↑';
+                saveData();
+                renderTree();
             };
-            buttons.appendChild(okBtn);
 
-            overlay.classList.add('show');
+            document.getElementById('collapseAllBtn').onclick = () => {
+                openFolders = new Set(['/']);
+                saveData();
+                renderTree();
+            };
 
-            // Enter key submit
-            const input = document.getElementById('modalInput');
-            if (input) {
-                input.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') {
-                        okBtn.click();
+            document.getElementById('expandAllBtn').onclick = () => {
+                openFolders = new Set(['/']);
+                function addAll(folder, path) {
+                    for (const name of Object.keys(folder.folders || {})) {
+                        const p = fullPath(path, name);
+                        openFolders.add(p);
+                        addAll(folder.folders[name], p);
                     }
-                });
-            }
-        }
+                }
+                addAll(data, '/');
+                saveData();
+                renderTree();
+            };
 
-        // --- EDITOR MODE ---
-        let isEditorActive = false;
+            // Header actions
+            document.getElementById('themeToggle').onclick = () => {
+                theme = theme === 'dark' ? 'light' : 'dark';
+                saveData();
+                applyTheme();
+            };
 
-        document.getElementById('editorToggle').addEventListener('click', function() {
-            if (!isEditorActive) {
-                document.getElementById('passwordModal').classList.add('show');
-                document.getElementById('passInput').value = '';
-                document.getElementById('passError').classList.remove('show');
-                setTimeout(() => document.getElementById('passInput').focus(), 100);
-            } else {
-                isEditorActive = false;
-                editorMode = false;
-                this.textContent = 'editor';
-                this.classList.remove('active');
-                document.getElementById('folderActions').classList.remove('show');
-                renderSidebar();
-                renderContent();
-            }
-        });
-
-        document.getElementById('passCancel').addEventListener('click', function() {
-            document.getElementById('passwordModal').classList.remove('show');
-        });
-
-        document.getElementById('passSubmit').addEventListener('click', function() {
-            const pass = document.getElementById('passInput').value;
-            if (pass === '1234') {
-                document.getElementById('passwordModal').classList.remove('show');
-                isEditorActive = true;
-                editorMode = true;
-                document.getElementById('editorToggle').textContent = 'editor on';
-                document.getElementById('editorToggle').classList.add('active');
-                document.getElementById('folderActions').classList.add('show');
-                renderSidebar();
-                renderContent();
-            } else {
-                document.getElementById('passError').classList.add('show');
-                document.getElementById('passInput').value = '';
-                document.getElementById('passInput').focus();
-            }
-        });
-
-        document.getElementById('passInput').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                document.getElementById('passSubmit').click();
-            }
-            if (e.key === 'Escape') {
-                document.getElementById('passCancel').click();
-            }
-        });
-
-        // Close modal on overlay click
-        document.getElementById('passwordModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.classList.remove('show');
-            }
-        });
-
-        document.getElementById('modalOverlay').addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.classList.remove('show');
-            }
-        });
-
-        // --- EXPORT / IMPORT ---
-        function exportHTML() {
-            const dataStr = JSON.stringify(data);
-            const script = `
-            <script>
-                window.__embeddedData = ${dataStr};
-            <\/script>
-            `;
-
-            const html = document.documentElement.outerHTML
-                .replace('</head>', script + '</head>')
-                .replace(
-                    /<script>[\s\S]*?<\/script>/,
-                    '<script>// data embedded in window.__embeddedData\n' +
-                    'if (window.__embeddedData) { data = window.__embeddedData; saveData(); renderSidebar(); renderContent(); }' +
-                    '<\/script>'
+            document.getElementById('exportHtmlBtn').onclick = () => {
+                const dataStr = JSON.stringify(data);
+                // Insert a script tag before </head> that sets window.__embeddedData
+                const html = document.documentElement.outerHTML.replace(
+                    '</head>',
+                    `<script>window.__embeddedData = ${dataStr};<\/script></head>`
                 );
+                downloadBlob(html, 'code_storage.html', 'text/html');
+            };
 
-            const blob = new Blob([html], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'code_storage.html';
-            a.click();
-            URL.revokeObjectURL(url);
-        }
+            document.getElementById('exportJsonBtn').onclick = () => {
+                downloadBlob(JSON.stringify(data, null, 2), 'code_storage_data.json', 'application/json');
+            };
 
-        // --- INIT ---
-        function init() {
+            document.getElementById('importJsonInput').onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    try {
+                        data = JSON.parse(ev.target.result);
+                        saveData();
+                        render();
+                        alert('Data imported');
+                    } catch {
+                        alert('Invalid JSON');
+                    }
+                };
+                reader.readAsText(file);
+            };
+
+            function downloadBlob(content, filename, mime) {
+                const blob = new Blob([content], { type: mime });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveCurrentFile(); }
+                if ((e.ctrlKey || e.metaKey) && e.key === 'e') { e.preventDefault(); editorToggle.click(); }
+                if (e.key === 'F2') {
+                    e.preventDefault();
+                    if (currentFile) showModal('Rename', 'New name:', false, getFileName(currentFile), (val)=>renameItem(currentFile, val));
+                    else if (selectedFolderPath !== '/') showModal('Rename', 'New name:', false, getFileName(selectedFolderPath), (val)=>renameItem(selectedFolderPath, val));
+                }
+            });
+
+            // Init
             if (!loadData()) {
-                // Default structure
                 data = {
+                    files: {},
                     folders: {
-                        'examples': {
+                        examples: {
                             files: {
-                                'example.txt': 'This is an example file.\nYou can edit this in editor mode.'
+                                'hello.txt': 'Hello! This is a sample file.\nYou can edit this in editor mode.',
+                                'password.txt': 'password: 1234, press ctrl+e to open editor to add ur code!'
                             },
                             folders: {}
                         }
@@ -1167,58 +1090,12 @@
                 };
                 saveData();
             }
-
-            // Check for embedded data
-            if (window.__embeddedData) {
-                data = window.__embeddedData;
-                saveData();
-                window.__embeddedData = null;
-            }
-
-            renderSidebar();
-            renderContent();
-
-            // Add export button to header
-            const header = document.querySelector('.header');
-            const exportBtn = document.createElement('button');
-            exportBtn.textContent = 'export';
-            exportBtn.style.cssText = `
-                background: #21262d;
-                border: 1px solid #30363d;
-                color: #c9d1d9;
-                padding: 2px 12px;
-                border-radius: 4px;
-                cursor: pointer;
-                font-size: 11px;
-                font-family: inherit;
-            `;
-            exportBtn.onmouseover = function() { this.style.background = '#30363d'; };
-            exportBtn.onmouseout = function() { this.style.background = '#21262d'; };
-            exportBtn.onclick = exportHTML;
-            header.appendChild(exportBtn);
-
-            // Keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    if (document.getElementById('passwordModal').classList.contains('show')) {
-                        document.getElementById('passwordModal').classList.remove('show');
-                    }
-                    if (document.getElementById('modalOverlay').classList.contains('show')) {
-                        document.getElementById('modalOverlay').classList.remove('show');
-                    }
-                }
-                if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
-                    e.preventDefault();
-                    document.getElementById('editorToggle').click();
-                }
-            });
-        }
-
-        // Handle iframe / netlify etc
-        document.addEventListener('DOMContentLoaded', init);
-        if (document.readyState === 'complete' || document.readyState === 'interactive') {
-            init();
-        }
+            if (window.__embeddedData) { data = window.__embeddedData; saveData(); }
+            render();
+            console.log('ready');
+        })();
     </script>
-</body>
-</html>
+
+<script async="" src="/.netlify/scripts/hud?variant=owner-private" data-nf-variant="owner-private" data-netlify-site-id="00309167-9947-4277-9792-374569cbb590" data-app-host="app.netlify.com"></script>
+<script async="" src="/.netlify/scripts/hud?variant=owner-private" data-nf-variant="owner-private" data-netlify-site-id="c41a5b4e-b65d-43bb-8235-39b4c4cfbe5f" data-app-host="app.netlify.com"></script>
+</body></html>
