@@ -1,0 +1,88 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+@Autonomous(name = "TPI Test - Measure Distance", group = "Test")
+public class TPITest extends LinearOpMode {
+
+    @Override
+    public void runOpMode() {
+        // this is where u get motors | replace with actual motor names!
+        DcMotor leftFront = hardwareMap.dcMotor.get("leftFront");
+        DcMotor rightFront = hardwareMap.dcMotor.get("rightFront");
+        DcMotor leftRear = hardwareMap.dcMotor.get("leftRear");
+        DcMotor rightRear = hardwareMap.dcMotor.get("rightRear");
+
+        // rev right side for mec wheel
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // reset encounters
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // run using encoder - self-explanatory.
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        telemetry.addData("Status", "Ready to test TPI");
+        telemetry.addData("", "Place robot on floor with ruler");
+        telemetry.addData("", "It will move 1000 ticks forward");
+        telemetry.addData("", "Then MEASURE how far it moved");
+        telemetry.update();
+
+        waitForStart();
+
+        if (opModeIsActive()) {
+            // 1000ticks forward
+            int targetTicks = 1000;
+            leftFront.setTargetPosition(targetTicks);
+            rightFront.setTargetPosition(targetTicks);
+            leftRear.setTargetPosition(targetTicks);
+            rightRear.setTargetPosition(targetTicks);
+
+            // slow and lowwww, 20% power.
+            leftFront.setPower(0.2);
+            rightFront.setPower(0.2);
+            leftRear.setPower(0.2);
+            rightRear.setPower(0.2);
+
+            // loop as motors move.
+            while (opModeIsActive() &&
+                   (leftFront.isBusy() || rightFront.isBusy() || 
+                    leftRear.isBusy() || rightRear.isBusy())) {
+                
+                telemetry.addData("Current Left Encoder", leftFront.getCurrentPosition());
+                telemetry.addData("Current Right Encoder", rightFront.getCurrentPosition());
+                telemetry.addData("Target", targetTicks);
+                telemetry.addData("", ">>> MEASURE DISTANCE MOVED <<<");
+                telemetry.addData("", "Ticks per Inch = 1000 / inches");
+                telemetry.update();
+            }
+
+            // STOP motors.
+            leftFront.setPower(0);
+            rightFront.setPower(0);
+            leftRear.setPower(0);
+            rightRear.setPower(0);
+
+            telemetry.addData("", "Donezo boi - Succesful - damn you jp i hate you.");
+            telemetry.addData("", "put tape and measure how far it moved");
+            telemetry.addData("", "TPI = 1000 / (inches moved)");
+            telemetry.addData("Left final", leftFront.getCurrentPosition());
+            telemetry.addData("Right final", rightFront.getCurrentPosition());
+            telemetry.update();
+
+            while (opModeIsActive()) {
+                idle();
+            }
+        }
+    }
+}
